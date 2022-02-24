@@ -8,11 +8,13 @@ use Bluewing\Progress\Structs\RaterStruct;
 use Bluewing\Progress\Structs\RatingStruct;
 use Exception;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Pure;
 
 class Progress
 {
-    /** @var ProgressStruct|null $progress */
-    protected $progress = null;
+    protected ProgressStruct|null $progress = null;
+    protected array $scores = [];
+    protected int $age = 0;
 
     /**
      * Progress constructor.
@@ -29,7 +31,6 @@ class Progress
         $this->progress->ratings = $ratings;
 
         $this->progress->userExcluded = $this->progress->rater->excludeFromStats;
-
         $this->progress->firstRating = $this->progress->ratings->first();
 
         if (is_null($this->progress->firstRating)) {
@@ -52,7 +53,7 @@ class Progress
 
         // Only update the rating change value if there is one or more ratings.
         if ($this->progress->ratings->count() > 0) {
-            $this->progress->ratingChange = (float)($this->progress->lastRating->score - $this->progress->firstRating->score);
+            $this->progress->ratingChange = ($this->progress->lastRating->score - $this->progress->firstRating->score);
         }
 
         // Algorithms
@@ -99,7 +100,7 @@ class Progress
      *
      * @return array
      */
-    public function flatten() : array
+    #[Pure] public function flatten() : array
     {
         return [
             'rater.excludeFromStats' => $this->progress->rater->excludeFromStats,

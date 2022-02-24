@@ -12,29 +12,17 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\EtrMtgTargetStruct;
 use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Pure;
 
 class EtrMtgTarget
 {
-    /** @var EtrMtgTargetStruct|null $data */
-    protected $data = null;
-
-    /** @var RatingStruct|null $firstRating */
-    protected $firstRating = null;
-
-    /** @var RatingStruct|null $lastRating */
-    protected $lastRating = null;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    protected $algorithm = null;
-
-    /** @var float $ratingChange */
-    protected $ratingChange = 0.0;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
-
-    /** @var int $raterAgeGroup */
-    protected $raterAgeGroup = 0;
+    protected EtrMtgTargetStruct|null $data = null;
+    protected RatingStruct|null $firstRating = null;
+    protected RatingStruct|null $lastRating = null;
+    protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
+    protected float $ratingChange = 0.0;
+    protected RatingCollection|null $ratings = null;
+    protected int $raterAgeGroup = 0;
 
     /**
      * EtrMtgTarget constructor.
@@ -105,7 +93,7 @@ class EtrMtgTarget
      *
      * @return EtrMtgTargetStruct
      */
-    public function data() : EtrMtgTargetStruct
+    #[Pure] public function data() : EtrMtgTargetStruct
     {
         if ($this->ratings->count() === 0) {
             return new EtrMtgTargetStruct;
@@ -119,13 +107,13 @@ class EtrMtgTarget
      *
      * @return float
      */
-    private function expectedChange() : float
+    #[Pure] private function expectedChange() : float
     {
         return $this->value($this->ratings->count()) - $this->firstRating->score;
     }
 
     /**
-     * Return a boolean indicating whether or not an OPEN rater met or exceeded the etr meeting target.
+     * Return a boolean indicating if an OPEN rater met or exceeded the etr meeting target.
      * This pertains to progress calculations, progress meter, stats.
      * We look at the last rating score.
      * This DOES NOT pertain to graph.
@@ -133,7 +121,7 @@ class EtrMtgTarget
      *
      * @return bool
      */
-    private function met() : bool
+    #[Pure] private function met() : bool
     {
         return $this->lastRating->score >= $this->value($this->ratings->count());
     }
@@ -144,36 +132,35 @@ class EtrMtgTarget
      * One (1) rating is REQUIRED.
      *
      * @return float
-     * @throws InvalidArgumentException
      */
-    private function metPercent() : float
+    #[Pure] private function metPercent() : float
     {
         // When the expected_change is 0.0, a division by 0 error can happen.
         // When the expected change is less than 0.0, it means the first rating score is above 32.
         // In these cases always return 0.0.
         if ($this->expectedChange() <= 0.0) {
-            return (float)0.0;
+            return 0.0;
         }
 
         $etrTargetMeetingMetPercent = (float)(($this->ratingChange / $this->expectedChange()) * 100);
 
         if ($etrTargetMeetingMetPercent > (float)100) {
-            return (float)100.0;
+            return 100.0;
         } else if ($etrTargetMeetingMetPercent < (float)0) {
-            return (float)0;
+            return 0.0;
         } else {
             return $etrTargetMeetingMetPercent;
         }
     }
 
     /**
-     * Return a boolean indicating whether or not an OPEN rater has met the predicted change
+     * Return a boolean indicating if an OPEN rater has met the predicted change
      * at a specific percentage.
      * This pertains to progress calculations, progress meter, and stats
      * This DOES NOT pertain to graph.
      * Two (2) rating scores are REQUIRED.
      *
-     * @param $predictedChangeIndex
+     * @param float $predictedChangeIndex
      * @return bool
      */
     private function predictedChangePercentMet(float $predictedChangeIndex) : bool
@@ -182,13 +169,11 @@ class EtrMtgTarget
         // When the expected change is less than 0.0, it means the first rating score is above 32.
         // In these cases always return 0.0.
         if ($this->expectedChange() <= 0.0) {
-            return (float)0.0;
+            return 0.0;
         }
 
-        $predictedChangeIndex = (float)$predictedChangeIndex;
-
         if ($predictedChangeIndex < 0 || $predictedChangeIndex > 100) {
-            throw new InvalidArgumentException('The $predicted_change_index parameter is invalid. It must be between 0.0 and 100.0.');
+            throw new InvalidArgumentException('The predictedChangeIndex parameter is invalid.  It must be between 0.0 and 100.0.');
         }
 
         return ($this->ratingChange / $this->expectedChange()) >= ($predictedChangeIndex / 100);
@@ -202,10 +187,8 @@ class EtrMtgTarget
      * @param int $meeting
      * @return float
      */
-    public function value(int $meeting = 0) : float
+    #[Pure] public function value(int $meeting = 0) : float
     {
-        $meeting = (int)$meeting;
-
         if ($meeting < 1 || $meeting > $this->ratings->count()) {
             return 0.0;
         }
@@ -222,9 +205,8 @@ class EtrMtgTarget
             return $this->firstRating->score;     // Intake meeting
         }
 
-        // This section of code uses the algorithm's flatten_meeting property to
-        // flatten the trajectory of the etr at the outer tail as it can get erratic (it drops after it reaches
-        // it's max altitude.
+        // This section of code uses the algorithm's flatten_meeting property to flatten the trajectory of the etr
+        // at the outer tail as it can get erratic (it drops after it reaches the max altitude).
 
         $i = $meeting - 1;
 

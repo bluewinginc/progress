@@ -4,12 +4,7 @@ namespace Bluewing\Progress\Structs;
 
 class SawtoothPatternStruct
 {
-    /** @var int $directionChanges */
-    public $directionChanges = 0;
-
-    /** @var bool $has */
-    public $has = false;
-
-    /** @var int $teeth */
-    public $teeth = 0;
+    public int $directionChanges = 0;
+    public bool $has = false;
+    public int $teeth = 0;
 }

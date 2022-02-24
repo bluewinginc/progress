@@ -13,17 +13,9 @@ use InvalidArgumentException;
 
 class ClinicalCutoff
 {
-    /** @var float $clinicalCutoff */
-    private $clinicalCutoff = 0.0;
-
-    /** @var ClinicalCutoffStruct|null $data */
-    private $data;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    private $algorithm;
-
-    /** @var RatingCollection|null $ratings */
-    private $ratings;
+    private ClinicalCutoffStruct|null $data;
+    private LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm;
+    private RatingCollection|null $ratings;
 
     /**
      * ClinicalCutoff constructor.
@@ -31,7 +23,7 @@ class ClinicalCutoff
      * @param LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm
      * @param RatingCollection $ratings
      */
-    public function __construct($algorithm, RatingCollection $ratings)
+    public function __construct(LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm, RatingCollection $ratings)
     {
         $this->data = new ClinicalCutoffStruct;
 

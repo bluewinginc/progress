@@ -65,7 +65,7 @@ class EtrPathTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('There are no ratings.');
 
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        new EtrPath($this::ADOLESCENT, $ratings);
     }
 
     /** @test */

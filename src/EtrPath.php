@@ -14,17 +14,10 @@ use InvalidArgumentException;
 
 class EtrPath
 {
-    /** @var EtrPathStruct|null */
-    protected $data = null;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    protected $algorithm = null;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
-
-    /** @var array $values */
-    protected $values = [];
+    protected EtrPathStruct|null $data = null;
+    protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
+    protected RatingCollection|null $ratings = null;
+    protected array $values = [];
 
     /**
      * EtrPath constructor.
@@ -37,6 +30,7 @@ class EtrPath
         $this->data = new EtrPathStruct;
 
         $this->ratings = $ratings;
+
         $this->data->raterAgeGroup = $raterAgeGroup;
 
         $this->calculateAndPopulateData();

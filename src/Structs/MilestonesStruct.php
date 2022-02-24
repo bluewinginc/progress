@@ -4,12 +4,7 @@ namespace Bluewing\Progress\Structs;
 
 class MilestonesStruct
 {
-    /** @var bool $cscMet */
-    public $cscMet = false;
-
-    /** @var bool $rcMet */
-    public $rcMet = false;
-
-    /** @var bool $rcOrCscMet */
-    public $rcOrCscMet = false;
+    public bool $cscMet = false;
+    public bool $rcMet = false;
+    public bool $rcOrCscMet = false;
 }

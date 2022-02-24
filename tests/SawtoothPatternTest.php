@@ -316,6 +316,7 @@ class SawtoothPatternTest extends TestCase
         $ratings->add(0, '2020-01-16', 28.4);    // -6.8 = 3
 
         $sawtoothPattern = new SawtoothPattern($ratings);
+
         $this->assertInstanceOf('Bluewing\Progress\SawtoothPattern', $sawtoothPattern);
 
         $sawtoothPatternData = $sawtoothPattern->data();
