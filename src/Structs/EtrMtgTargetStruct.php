@@ -4,21 +4,10 @@ namespace Bluewing\Progress\Structs;
 
 class EtrMtgTargetStruct
 {
-    /** @var float $expectedChange */
-    public $expectedChange = 0.0;
-
-    /** @var bool $met */
-    public $met = false;
-
-    /** @var float $metPercent */
-    public $metPercent = 0.0;
-
-    /** @var bool $metPercent50 */
-    public $metPercent50 = false;
-
-    /** @var bool $metPercent67 */
-    public $metPercent67 = false;
-
-    /** @var float $value */
-    public $value = 0.0;
+    public float $expectedChange = 0.0;
+    public bool $met = false;
+    public float $metPercent = 0.0;
+    public bool $metPercent50 = false;
+    public bool $metPercent67 = false;
+    public float $value = 0.0;
 }

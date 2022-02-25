@@ -3,14 +3,12 @@
 namespace Bluewing\Progress;
 
 use Bluewing\Progress\Structs\SawtoothPatternStruct;
+use JetBrains\PhpStorm\Pure;
 
 class SawtoothPattern
 {
-    /** @var SawtoothPatternStruct|null $data */
-    protected $data = null;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
+    protected SawtoothPatternStruct|null $data = null;
+    protected RatingCollection|null $ratings = null;
 
     const DIRECTION_CHANGES = 4;
     const POINT_CHANGE = 6;
@@ -25,6 +23,7 @@ class SawtoothPattern
         $this->data = new SawtoothPatternStruct;
 
         $this->ratings = $ratings;
+
         $this->data->directionChanges = $this->calculateSawtoothDirectionChanges();
         $this->data->has = $this->has();
         $this->data->teeth = $this->teeth();
@@ -90,7 +89,7 @@ class SawtoothPattern
      *
      * @return bool
      */
-    private function has() : bool
+    #[Pure] private function has() : bool
     {
         if ($this->ratings->count() < $this::DIRECTION_CHANGES + 1) {
             return false;
@@ -101,7 +100,7 @@ class SawtoothPattern
 
     /**
      * Return the number of teeth.
-     * There must be at least one direction change or it is automatically 0.
+     * There must be at least one direction change, or it is automatically 0.
      *
      * @return int
      */

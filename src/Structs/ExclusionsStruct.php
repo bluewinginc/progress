@@ -4,18 +4,9 @@ namespace Bluewing\Progress\Structs;
 
 class ExclusionsStruct
 {
-    /** @var bool $excluded */
-    public $excluded = true;
-
-    /** @var bool $userExcluded */
-    public $userExcluded = false;
-
-    /** @var bool $firstRatingAbove32 */
-    public $firstRatingAbove32 = false;
-
-    /** @var bool $zeroOrOneMeetings */
-    public $zeroOrOneMeetings = true;
-
-    /** @var bool $included */
-    public $included = false;
+    public bool $excluded = true;
+    public bool $userExcluded = false;
+    public bool $firstRatingAbove32 = false;
+    public bool $zeroOrOneMeetings = true;
+    public bool $included = false;
 }

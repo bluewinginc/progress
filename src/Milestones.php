@@ -11,26 +11,16 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\MilestonesStruct;
 use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Pure;
 
 class Milestones
 {
-    /** @var MilestonesStruct|null $data */
-    protected $data = null;
-
-    /** @var RatingStruct|null $firstRating */
-    protected $firstRating = null;
-
-    /** @var RatingStruct|null $lastRating */
-    protected $lastRating = null;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    protected $algorithm = null;
-
-    /** @var float $ratingChange */
-    protected $ratingChange = 0.0;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
+    protected MilestonesStruct|null $data = null;
+    protected RatingStruct|null $firstRating = null;
+    protected RatingStruct|null $lastRating = null;
+    protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
+    protected RatingCollection|null $ratings = null;
+    protected float $change = 0.0;
 
     /**
      * Milestones constructor.
@@ -38,7 +28,7 @@ class Milestones
      * @param LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm
      * @param RatingCollection $ratings
      */
-    public function __construct($algorithm, RatingCollection $ratings)
+    public function __construct(LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm, RatingCollection $ratings)
     {
         $this->algorithm = $algorithm;
         $this->ratings = $ratings;
@@ -50,7 +40,6 @@ class Milestones
 
     /**
      * Calculate and populate data.
-     *
      * @return void
      */
     private function calculateAndPopulateData() : void
@@ -74,10 +63,10 @@ class Milestones
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->ratingChange = ($this->lastRating->score - $this->firstRating->score);
+        $this->change = ($this->lastRating->score - $this->firstRating->score);
 
         $this->data->cscMet = $this->cscMet();
-        $this->data->rcMet = $this->data->cscMet ? false : $this->rcMet();
+        $this->data->rcMet = !$this->data->cscMet && $this->rcMet();
         $this->data->rcOrCscMet = $this->data->rcMet || $this->data->cscMet;
     }
 
@@ -92,12 +81,12 @@ class Milestones
     }
 
     /**
-     * Determine whether or not an OPEN or CLOSED rater met clinically significant change.
+     * Determine if an OPEN or CLOSED rater met clinically significant change.
      * There must be at least two (2) rating scores.
      *
      * @return bool
      */
-    private function cscMet() : bool
+    #[Pure] private function cscMet() : bool
     {
         if (! $this->rcMet()) {
             return false;
@@ -118,6 +107,6 @@ class Milestones
      */
     private function rcMet() : bool
     {
-        return ($this->ratingChange >= $this->algorithm->reliableChangeIndex);
+        return ($this->change >= $this->algorithm->reliableChangeIndex);
     }
 }

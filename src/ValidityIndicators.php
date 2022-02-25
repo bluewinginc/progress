@@ -11,17 +11,13 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\ClinicalCutoffStruct;
 use Bluewing\Progress\Structs\SawtoothPatternStruct;
 use Bluewing\Progress\Structs\ValidityIndicatorsStruct;
+use JetBrains\PhpStorm\Pure;
 
 class ValidityIndicators
 {
-    /** @var ValidityIndicatorsStruct|null $data */
-    protected $data = null;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    protected $algorithm = null;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
+    protected ValidityIndicatorsStruct|null $data = null;
+    protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
+    protected RatingCollection|null $ratings = null;
 
     /**
      * ValidityIndicators constructor.
@@ -29,7 +25,7 @@ class ValidityIndicators
      * @param LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm
      * @param RatingCollection $ratings
      */
-    public function __construct($algorithm, RatingCollection $ratings)
+    public function __construct(LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild $algorithm, RatingCollection $ratings)
     {
         $this->data = new ValidityIndicatorsStruct;
 
@@ -68,15 +64,13 @@ class ValidityIndicators
      *
      * @return bool
      */
-    private function firstRatingAbove32() : bool
+    #[Pure] private function firstRatingAbove32() : bool
     {
         if ($this->ratings->count() === 0) {
             return false;
         }
 
-        $firstRating = $this->ratings->first();
-
-        return $firstRating->score > 32.0;
+        return $this->ratings->first()->score > 32.0;
     }
 
     /**
@@ -91,11 +85,11 @@ class ValidityIndicators
     }
 
     /**
-     * Determine if there are zero or one meetings.
+     * Determine if there is < 2 meetings.
      *
      * @return bool
      */
-    private function zeroOrOneMeetings() : bool
+    #[Pure] private function zeroOrOneMeetings() : bool
     {
         return ($this->ratings->count() < 2);
     }

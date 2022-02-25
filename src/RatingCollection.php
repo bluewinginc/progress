@@ -3,17 +3,13 @@
 namespace Bluewing\Progress;
 
 use Bluewing\Progress\Structs\RatingStruct;
+use InvalidArgumentException;
+use JetBrains\PhpStorm\Pure;
 
 class RatingCollection
 {
-    /** @var int $count */
-    private $count = 0;
-
-    /** @var array $items */
-    private $items = [];
-
-    /** @var bool $readOnly */
-    private $readOnly = false;
+    private array $items = [];
+    private bool $readOnly = false;
 
     /**
      * RatingCollection constructor.
@@ -26,50 +22,41 @@ class RatingCollection
     /**
      * Add an item to the end of the collection.
      *
-     * @param int $id
-     * @param string $dateCompleted
+     * @param int|null $id
+     * @param string|null $dateCompleted
      * @param float $score
-     * @return RatingCollection
+     * @return $this
      */
-    public function add(int $id, string $dateCompleted, float $score) : RatingCollection
+    public function add(int|null $id, string|null $dateCompleted, float $score) : RatingCollection
     {
         if (! $this->readOnly) {
             $ratingStruct = new RatingStruct;
+
+            if ($score < 0 || $score > 40) {
+                throw new InvalidArgumentException('Invalid score.  It must be between 0.0 and 40.0.');
+            }
 
             $ratingStruct->id = $id;
             $ratingStruct->dateCompleted = $dateCompleted;
             $ratingStruct->score = $score;
 
             $this->items[] = $ratingStruct;
-            $this->count = count($this->items);
         }
 
         return $this;
     }
 
     /**
-     * Add array items to the collection.
+     * Add an array of scores to the collection.
      *
-     * @param array $ratingsArray
-     * @return RatingCollection
+     * @param array $scores
+     * @return $this
      */
-    public function addFromArray(array $ratingsArray) : RatingCollection
+    public function addScores(array $scores) : RatingCollection
     {
-        $count = count($ratingsArray);
-
-        if ($count > 0) {
-            if (! $this->readOnly) {
-                for ($i = 0; $i < $count; $i++) {
-                    $rating = new RatingStruct;
-
-                    $rating->id = 0;
-                    $rating->score = $ratingsArray[$i];
-                    $rating->dateCompleted = null;
-
-                    $this->items[] = $rating;
-                }
-
-                $this->count = count($this->items);
+        if (! $this->readOnly) {
+            for ($i = 0; $i < count($scores); $i++) {
+                $this->add(null, null, $scores[$i]);
             }
         }
 
@@ -77,16 +64,15 @@ class RatingCollection
     }
 
     /**
-     * Add an item to the end of the collection.
+     * Add a RatingStruct item to the end of the collection.
      *
      * @param RatingStruct $rating
-     * @return RatingCollection
+     * @return $this
      */
-    public function addFromStruct(RatingStruct $rating) : RatingCollection
+    public function addStruct(RatingStruct $rating) : RatingCollection
     {
         if (! $this->readOnly) {
-            $this->items[] = $rating;
-            $this->count = count($this->items);
+            $this->add($rating->id, $rating->dateCompleted, $rating->score);
         }
 
         return $this;
@@ -107,7 +93,7 @@ class RatingCollection
      *
      * @return RatingStruct|null
      */
-    public function first() : ?RatingStruct
+    #[Pure] public function first() : ?RatingStruct
     {
         if ($this->count() > 0) {
             return $this->items[0];
@@ -117,24 +103,24 @@ class RatingCollection
     }
 
     /**
-     * Determine if the specified index contains an item.
+     * Determine if the specified index is in bounds.
      *
      * @param int $index
-     * @return bool
+     * @return void
      */
-    private function indexContainsItem(int $index) : bool
+    private function indexInBounds(int $index) : void
     {
-        // The index must be 0 or greater than 0.
+        if ($this->count() === 0) {
+            throw new InvalidArgumentException('The index is invalid.  There are no items in the collection.');
+        }
+
         if ($index < 0) {
-            return false;
+            throw new InvalidArgumentException('The index is invalid.  The lower bound of the index is 0.');
         }
 
-        // The index cannot be equal to the count or be greater than the count.
-        if ($index >= $this->count()) {
-            return false;
+        if ($index > ($this->count() - 1)) {
+            throw new InvalidArgumentException('The index is invalid.  The upper bound of the index is count() - 1.');
         }
-
-        return true;
     }
 
     /**
@@ -155,6 +141,8 @@ class RatingCollection
      */
     public function item(int $index) : RatingStruct
     {
+        $this->indexInBounds($index);
+
         return $this->items[$index];
     }
 
@@ -173,7 +161,7 @@ class RatingCollection
      *
      * @return RatingStruct|null
      */
-    public function last() : ?RatingStruct
+    #[Pure] public function last() : ?RatingStruct
     {
         if ($this->count() > 0) {
             $lastIndex = $this->count() - 1;
@@ -187,8 +175,10 @@ class RatingCollection
     /**
      * Make the collection readonly.
      * Items will not be able to be added or removed from the collection.
+     *
+     * @return void
      */
-    public function makeReadOnly()
+    public function makeReadOnly() : void
     {
         if (! $this->readOnly) {
             $this->readOnly = true;
@@ -207,7 +197,6 @@ class RatingCollection
         }
 
         $this->items = [];
-        $this->count = count($this->items);
 
         return $this;
     }
@@ -224,15 +213,28 @@ class RatingCollection
             return $this;
         }
 
-        if (! $this->indexContainsItem($index)) {
-            return $this;
-        }
+        $this->indexInBounds($index);
 
         unset($this->items[$index]);
 
         $this->items = array_values($this->items);
-        $this->count = count($this->items);
 
         return $this;
+    }
+
+    /**
+     * Return the scores in the collection as an array.
+     *
+     * @return array
+     */
+    public function scores() : array
+    {
+        $scores = [];
+
+        foreach($this->items as $item) {
+            $scores[] = $item->score;
+        }
+
+        return $scores;
     }
 }

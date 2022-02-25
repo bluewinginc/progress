@@ -4,12 +4,7 @@ namespace Bluewing\Progress\Structs;
 
 class ClinicalCutoffStruct
 {
-    /** @var float $value  */
-    public $value = 0.0;
-
-    /** @var float $firstRatingScore */
-    public $firstRatingScore = 0.0;
-
-    /** @var bool $isAbove */
-    public $isAbove = false;
+    public float $value = 0.0;
+    public float $firstRatingScore = 0.0;
+    public bool $isAbove = false;
 }

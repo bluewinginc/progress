@@ -12,42 +12,29 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\EtrTargetStruct;
 use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Pure;
 
 class EtrTarget
 {
-    /** @var EtrTargetStruct|null $data */
-    protected $data = null;
-
-    /** @var RatingStruct|null $firstRating */
-    protected $firstRating = null;
-
-    /** @var RatingStruct|null $lastRating */
-    protected $lastRating = null;
-
-    /** @var LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm */
-    protected $algorithm = null;
-
-    /** @var float $ratingChange */
-    protected $ratingChange = 0.0;
-
-    /** @var RatingCollection|null $ratings */
-    protected $ratings = null;
-
-    /** @var int $raterAgeGroup */
-    protected $raterAgeGroup = 0;
+    protected EtrTargetStruct|null $data = null;
+    protected int $age = 0;
+    protected RatingCollection|null $ratings = null;
+    protected RatingStruct|null $firstRating = null;
+    protected RatingStruct|null $lastRating = null;
+    protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
+    protected float $change = 0.0;
 
     /**
      * EtrTargetValue constructor.
      *
-     * @param int $raterAgeGroup
+     * @param int $age
      * @param RatingCollection $ratings
      */
-    public function __construct(int $raterAgeGroup, RatingCollection $ratings)
+    public function __construct(int $age, RatingCollection $ratings)
     {
         $this->data = new EtrTargetStruct;
 
-        $this->raterAgeGroup = $raterAgeGroup;
-
+        $this->age = $age;
         $this->ratings = $ratings;
 
         $this->calculateAndPopulateData();
@@ -66,12 +53,12 @@ class EtrTarget
         // 1. The short-term target is not as difficult to reach than the long term target.
         // 2. Most people fit will be served in less than 9 meetings, which uses the short-term algorithm.
 
-        $this->algorithm = $manager->getFor($this->raterAgeGroup, 0);
+        $this->algorithm = $manager->getFor($this->age, 0);
 
         $this->firstRating = $this->ratings->first();
 
         if ($this->ratings->count() <= 1 || $this->firstRating->score > 32.0) {
-            $this->ratingChange = 0.0;
+            $this->change = 0.0;
 
             $this->data->expectedChange = 0.0;
             $this->data->met = false;
@@ -93,7 +80,7 @@ class EtrTarget
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->ratingChange = ($this->lastRating->score - $this->firstRating->score);
+        $this->change = ($this->lastRating->score - $this->firstRating->score);
 
         $this->data->expectedChange = $this->expectedChange();
         $this->data->met = $this->met();
@@ -108,7 +95,7 @@ class EtrTarget
      *
      * @return EtrTargetStruct
      */
-    public function data() : EtrTargetStruct
+    #[Pure] public function data() : EtrTargetStruct
     {
         if ($this->ratings->count() === 0) {
             return new EtrTargetStruct;
@@ -122,18 +109,18 @@ class EtrTarget
      *
      * @return float
      */
-    private function expectedChange() : float
+    #[Pure] private function expectedChange() : float
     {
         return $this->value() - $this->firstRating->score;
     }
 
     /**
-     * Return a boolean indicating whether or not a CLOSED rater met or exceeded the etr target.
+     * Return a boolean indicating if a CLOSED rater met or exceeded the etr target.
      * One (1) rating score REQUIRED.
      *
      * @return bool
      */
-    private function met() : bool
+    #[Pure] private function met() : bool
     {
         return $this->lastRating->score >= $this->value();
     }
@@ -146,28 +133,28 @@ class EtrTarget
      * @return float
      * @throws InvalidArgumentException
      */
-    private function metPercent() : float
+    #[Pure] private function metPercent() : float
     {
         // When the expected_change is 0.0, a division by 0 error can happen.
         // When the expected change is less than 0.0, it means the first score is above 32.
         // In these cases always return 0.0.
         if ($this->expectedChange() <= 0.0) {
-            return (float)0.0;
+            return 0.0;
         }
 
-        $etrTargetMetPercent = (float)(($this->ratingChange / $this->expectedChange()) * 100);
+        $etrTargetMetPercent = (float)(($this->change / $this->expectedChange()) * 100);
 
         if ($etrTargetMetPercent > (float)100) {
-            return (float)100.0;
+            return 100.0;
         } else if ($etrTargetMetPercent < (float)0) {
-            return (float)0;
+            return 0.0;
         } else {
             return $etrTargetMetPercent;
         }
     }
 
     /**
-     * Return a boolean indicating whether or not a CLOSED rater has met the predicted change at a specific percentage.
+     * Return a boolean indicating if a CLOSED rater has met the predicted change at a specific percentage.
      * Two (2) rating scores are REQUIRED.
      *
      * @param float $predictedChangeIndex
@@ -179,19 +166,17 @@ class EtrTarget
         // When the expected change is less than 0.0, it means the first rating score is above 32.
         // In these cases always return 0.0.
         if ($this->expectedChange() <= 0.0) {
-            return (float)0.0;
+            return 0.0;
         }
-
-        $predictedChangeIndex = (float)$predictedChangeIndex;
 
         if ($predictedChangeIndex < 0 || $predictedChangeIndex > 100) {
             throw new InvalidArgumentException('The $predictedChangeIndex parameter is invalid. It must be between 0.0 and 100.0.');
         }
 
-        return (($this->ratingChange / $this->expectedChange()) >= ($predictedChangeIndex / 100));
+        return (($this->change / $this->expectedChange()) >= ($predictedChangeIndex / 100));
     }
 
-    /*
+    /**
      * Return a value that represents the etr target.
      * It is the highest score on the ETR.
      * This is the value that is displayed on stats labeled Target.

@@ -4,15 +4,8 @@ namespace Bluewing\Progress\Structs;
 
 class EtrPathStruct
 {
-    /** @var RatingStruct|null $firstRating */
-    public $firstRating = null;
-
-    /** @var int $meetings */
-    public $meetings = 0;
-
-    /** @var int $raterAgeGroup */
-    public $raterAgeGroup = 0;
-
-    /** @var array $values */
-    public $values = [];
+    public RatingStruct|null $firstRating = null;
+    public int $meetings = 0;
+    public int $raterAgeGroup = 0;
+    public array $values = [];
 }

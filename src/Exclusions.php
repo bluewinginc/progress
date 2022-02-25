@@ -3,11 +3,11 @@
 namespace Bluewing\Progress;
 
 use Bluewing\Progress\Structs\ExclusionsStruct;
+use JetBrains\PhpStorm\Pure;
 
 class Exclusions
 {
-    /** @var ExclusionsStruct|null $data */
-    protected $data = null;
+    protected ExclusionsStruct|null $data = null;
 
     /**
      * Exclusions constructor.
@@ -16,7 +16,7 @@ class Exclusions
      * @param bool $firstRatingAbove32
      * @param bool $zeroOrOneMeetings
      */
-    public function __construct(bool $userExcluded, bool $firstRatingAbove32, bool $zeroOrOneMeetings)
+    #[Pure] public function __construct(bool $userExcluded, bool $firstRatingAbove32, bool $zeroOrOneMeetings)
     {
         $this->data = new ExclusionsStruct;
 
