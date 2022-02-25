@@ -100,7 +100,7 @@ class Progress
      *
      * @return array
      */
-    #[Pure] public function flatten() : array
+    #[Pure] public function toArray() : array
     {
         return [
             'rater.excludeFromStats' => $this->progress->rater->excludeFromStats,
