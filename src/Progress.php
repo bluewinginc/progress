@@ -183,4 +183,14 @@ class Progress
             'exclusions.included' => $this->progress->exclusions->included
         ];
     }
+
+    /**
+     * Return the data as JSON.
+     *
+     * @return false|string
+     */
+    public function toJson() : false|string
+    {
+        return '';
+    }
 }
