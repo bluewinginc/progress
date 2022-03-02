@@ -10,31 +10,30 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermAdult;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\EtrTargetStruct;
-use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;
 
 class EtrTarget
 {
     protected EtrTargetStruct|null $data = null;
-    protected int $age = 0;
+    protected Rater|null $rater = null;
     protected RatingCollection|null $ratings = null;
-    protected RatingStruct|null $firstRating = null;
-    protected RatingStruct|null $lastRating = null;
+    protected Rating|null $firstRating = null;
+    protected Rating|null $lastRating = null;
     protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
     protected float $change = 0.0;
 
     /**
      * EtrTargetValue constructor.
      *
-     * @param int $age
+     * @param Rater $rater
      * @param RatingCollection $ratings
      */
-    public function __construct(int $age, RatingCollection $ratings)
+    public function __construct(Rater $rater, RatingCollection $ratings)
     {
         $this->data = new EtrTargetStruct;
 
-        $this->age = $age;
+        $this->rater = $rater;
         $this->ratings = $ratings;
 
         $this->calculateAndPopulateData();
@@ -53,11 +52,11 @@ class EtrTarget
         // 1. The short-term target is not as difficult to reach than the long term target.
         // 2. Most people fit will be served in less than 9 meetings, which uses the short-term algorithm.
 
-        $this->algorithm = $manager->getFor($this->age, 0);
+        $this->algorithm = $manager->getFor($this->rater->data()->ageGroup, 0);
 
         $this->firstRating = $this->ratings->first();
 
-        if ($this->ratings->count() <= 1 || $this->firstRating->score > 32.0) {
+        if ($this->ratings->count() <= 1 || $this->firstRating->data()->score > 32.0) {
             $this->change = 0.0;
 
             $this->data->expectedChange = 0.0;
@@ -70,17 +69,17 @@ class EtrTarget
             return;
         }
 
-        if ($this->firstRating->score < 0 || $this->firstRating->score > 40) {
+        if ($this->firstRating->data()->score < 0 || $this->firstRating->data()->score > 40) {
             throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
         $this->lastRating = $this->ratings->last();
 
-        if ($this->lastRating->score < 0 || $this->lastRating->score > 40) {
+        if ($this->lastRating->data()->score < 0 || $this->lastRating->data()->score > 40) {
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->change = ($this->lastRating->score - $this->firstRating->score);
+        $this->change = ($this->lastRating->data()->score - $this->firstRating->data()->score);
 
         $this->data->expectedChange = $this->expectedChange();
         $this->data->met = $this->met();
@@ -111,7 +110,7 @@ class EtrTarget
      */
     #[Pure] private function expectedChange() : float
     {
-        return $this->value() - $this->firstRating->score;
+        return $this->value() - $this->firstRating->data()->score;
     }
 
     /**
@@ -122,7 +121,7 @@ class EtrTarget
      */
     #[Pure] private function met() : bool
     {
-        return $this->lastRating->score >= $this->value();
+        return $this->lastRating->data()->score >= $this->value();
     }
 
     /**
@@ -186,10 +185,10 @@ class EtrTarget
      *
      * @return float
      */
-    private function value() : float
+    #[Pure] private function value() : float
     {
         $flattenMeeting = $this->algorithm->flattenMeeting;
-        $centeredAt20 = $this->firstRating->score - 20;
+        $centeredAt20 = $this->firstRating->data()->score - 20;
         $interceptMean = $this->algorithm->interceptMean + ($this->algorithm->intake * $centeredAt20);
         $linearMean = $this->algorithm->linearMean + ($this->algorithm->linearByIntake * $centeredAt20);
         $quadraticMean = $this->algorithm->quadraticMean + ($this->algorithm->quadraticByIntake * $centeredAt20);

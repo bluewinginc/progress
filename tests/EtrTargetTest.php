@@ -3,6 +3,7 @@
 namespace Bluewing\Progress\Tests;
 
 use Bluewing\Progress\EtrTarget;
+use Bluewing\Progress\Rater;
 use Bluewing\Progress\RatingCollection;
 use PHPUnit\Framework\TestCase;
 
@@ -15,6 +16,7 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function it_returns_the_expected_change()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 12.1);
@@ -25,7 +27,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(6, '', 9.1);
         $ratings->add(7, '', 10.2);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -35,6 +37,7 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function it_returns_whether_or_not_the_etr_target_was_met()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 12.1);
@@ -47,7 +50,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 26.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -57,6 +60,7 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function it_returns_the_etr_target_met_percent()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 12.1);
@@ -69,7 +73,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 26.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -87,7 +91,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 21.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -97,6 +101,7 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function it_returns_whether_the_etr_target_was_met_at_the_two_predefined_percent_levels()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 12.1);
@@ -109,7 +114,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 26.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -129,7 +134,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 21.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -141,6 +146,7 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function return_the_etr_target_value_for_a_meeting()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 12.1);
@@ -153,7 +159,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(8, '', 20.1);
         $ratings->add(9, '', 26.0);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -163,9 +169,10 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function return_initialized_values_when_using_st_adolescent_algorithm_and_no_ratings()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -180,12 +187,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_value_is_correct()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 19.2);
         $ratings->add(2, '', 20.3);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -200,12 +208,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_not_met()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 20.1);
         $ratings->add(2, '', 22.2);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -220,12 +229,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_met()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 20.1);
         $ratings->add(2, '', 36.2);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -240,12 +250,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_met_percent_is_correct()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 19.2);
         $ratings->add(2, '', 24.3);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -260,12 +271,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_predicted_change_percent_met_is_false()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 19.2);
         $ratings->add(2, '', 23.2);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -280,12 +292,13 @@ class EtrTargetTest extends TestCase
     /** @test */
     public function etr_target_predicted_change_percent_met_is_true()
     {
+        $rater = new Rater($this::ADOLESCENT);
         $ratings = new RatingCollection;
 
         $ratings->add(1, '', 19.2);
         $ratings->add(2, '', 23.2);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 
@@ -301,7 +314,7 @@ class EtrTargetTest extends TestCase
         $ratings->add(1, '', 19.2);
         $ratings->add(2, '', 29.3);
 
-        $etrTarget = new EtrTarget($this::ADOLESCENT, $ratings);
+        $etrTarget = new EtrTarget($rater, $ratings);
 
         $data = $etrTarget->data();
 

@@ -16,22 +16,26 @@ class EtrPath
 {
     protected EtrPathStruct|null $data = null;
     protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
-    protected RatingCollection|null $ratings = null;
     protected array $values = [];
 
     /**
      * EtrPath constructor.
      *
-     * @param int $raterAgeGroup
-     * @param RatingCollection $ratings
+     * @param Rater $rater
+     * @param Rating $firstRating
+     * @param int $meetings
      */
-    public function __construct(int $raterAgeGroup, RatingCollection $ratings)
+    public function __construct(Rater $rater, Rating $firstRating, int $meetings)
     {
+        if ($meetings <= 0) {
+            throw new InvalidArgumentException('There meetings argument must be greater than 0.');
+        }
+
         $this->data = new EtrPathStruct;
 
-        $this->ratings = $ratings;
-
-        $this->data->raterAgeGroup = $raterAgeGroup;
+        $this->data->rater = $rater;
+        $this->data->firstRating = $firstRating;
+        $this->data->meetings = $meetings;
 
         $this->calculateAndPopulateData();
     }
@@ -41,23 +45,12 @@ class EtrPath
      *
      * @return void
      */
-    private function calculateAndPopulateData() : void
+    private function calculateAndPopulateData(): void
     {
         $manager = new AlgorithmManager;
 
-        $this->algorithm = $manager->getFor($this->data->raterAgeGroup, $this->ratings->count());
+        $this->algorithm = $manager->getFor($this->data->rater->data()->ageGroup, $this->data->meetings);
 
-        if ($this->ratings->count() === 0) {
-            throw new InvalidArgumentException('There are no ratings.');
-        }
-
-        $this->data->firstRating = $this->ratings->first();
-
-        if ($this->data->firstRating->score < 0 || $this->data->firstRating->score > 40) {
-            throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
-        }
-
-        $this->data->meetings = $this->ratings->count();
         $this->data->values = $this->calculateValues();
     }
 
@@ -66,7 +59,7 @@ class EtrPath
      *
      * @return EtrPathStruct
      */
-    public function data() : EtrPathStruct
+    public function data(): EtrPathStruct
     {
         return $this->data;
     }
@@ -81,11 +74,11 @@ class EtrPath
      * @return array
      * @throws InvalidArgumentException
      */
-    private function calculateValues() : array
+    private function calculateValues(): array
     {
         $flattenMeeting = $this->algorithm->flattenMeeting;
         $maxMeetings = $this->algorithm->maxMeetings;
-        $centeredAt20 = $this->data->firstRating->score - 20;
+        $centeredAt20 = $this->data->firstRating->data()->score - 20;
         $interceptMean = $this->algorithm->interceptMean + ($this->algorithm->intake * $centeredAt20);
         $linearMean = $this->algorithm->linearMean + ($this->algorithm->linearByIntake * $centeredAt20);
         $quadraticMean = $this->algorithm->quadraticMean + ($this->algorithm->quadraticByIntake * $centeredAt20);
@@ -99,7 +92,7 @@ class EtrPath
 
         // Add the intake session.
         $values = [];
-        $values[] = $this->data->firstRating->score;
+        $values[] = $this->data->firstRating->data()->score;
 
         // Add the remaining values.
         for ($i = 1; $i < $this->data->meetings; $i++) {

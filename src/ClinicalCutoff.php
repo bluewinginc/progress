@@ -50,12 +50,12 @@ class ClinicalCutoff
             return;
         }
 
-        if ($firstRating->score < 0 || $firstRating->score > 40) {
+        if ($firstRating->data()->score < 0 || $firstRating->data()->score > 40) {
             throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->data->firstRatingScore = $firstRating->score;
-        $this->data->isAbove = ($firstRating->score > $this->data->value);
+        $this->data->firstRatingScore = $firstRating->data()->score;
+        $this->data->isAbove = ($firstRating->data()->score > $this->data->value);
     }
 
     /**

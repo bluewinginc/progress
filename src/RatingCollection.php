@@ -2,7 +2,6 @@
 
 namespace Bluewing\Progress;
 
-use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;
 
@@ -20,62 +19,81 @@ class RatingCollection
     }
 
     /**
-     * Add an item to the end of the collection.
+     * Add a rating to the collection.  Use named argument to just pass a score.
      *
      * @param int|null $id
      * @param string|null $dateCompleted
      * @param float $score
-     * @return $this
      */
-    public function add(int|null $id, string|null $dateCompleted, float $score) : RatingCollection
+    public function add(int|null $id = null, string|null $dateCompleted = null, float $score = 0.0): void
     {
         if (! $this->readOnly) {
-            $ratingStruct = new RatingStruct;
-
-            if ($score < 0 || $score > 40) {
-                throw new InvalidArgumentException('Invalid score.  It must be between 0.0 and 40.0.');
-            }
-
-            $ratingStruct->id = $id;
-            $ratingStruct->dateCompleted = $dateCompleted;
-            $ratingStruct->score = $score;
-
-            $this->items[] = $ratingStruct;
+            $this->items[] = new Rating($id, $dateCompleted, $score);
         }
+    }
 
-        return $this;
+    /**
+     * Add a rating as an array item.
+     * The item shape: ['id' => int|null, 'dateCompleted' => string|null, 'score' => float]
+     * Example of an array item: ['id' => 1, 'dateCompleted' => '2021-02-28', 'score' => 1.2]
+     *
+     * @param array $item
+     */
+    public function addItem(array $item): void
+    {
+        if (! $this->readOnly) {
+            $rating = new Rating();
+            $rating->fromArray($item);
+            $this->addRating($rating);
+        }
+    }
+
+    /**
+     * Add a rating to the collection.
+     *
+     * @param Rating $rating
+     */
+    public function addRating(Rating $rating): void
+    {
+        if (! $this->readOnly) {
+            $this->items[] = $rating;
+        }
+    }
+
+    /**
+     * Add an array of an array of rating props to the collection.
+     * The array item shape: ['id' => int|null, 'dateCompleted' => string|null, 'score' => float]
+     * Example of an array item: ['id' => 1, 'dateCompleted' => '2021-02-28', 'score' => 1.2]
+     *
+     * @param array $items
+     */
+    public function addRatings(array $items): void
+    {
+        if (! $this->readOnly) {
+
+            /* @var array $item */
+            foreach($items as $item) {
+                $rating = new Rating();
+                $rating->fromArray($item);
+                $this->addRating($rating);
+            }
+        }
     }
 
     /**
      * Add an array of scores to the collection.
      *
      * @param array $scores
-     * @return $this
      */
-    public function addScores(array $scores) : RatingCollection
+    public function addScores(array $scores): void
     {
         if (! $this->readOnly) {
-            for ($i = 0; $i < count($scores); $i++) {
-                $this->add(null, null, $scores[$i]);
+
+            /* @var float $score */
+            foreach($scores as $score) {
+                $this->add(score: $score);
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Add a RatingStruct item to the end of the collection.
-     *
-     * @param RatingStruct $rating
-     * @return $this
-     */
-    public function addStruct(RatingStruct $rating) : RatingCollection
-    {
-        if (! $this->readOnly) {
-            $this->add($rating->id, $rating->dateCompleted, $rating->score);
-        }
-
-        return $this;
     }
 
     /**
@@ -83,17 +101,17 @@ class RatingCollection
      *
      * @return int
      */
-    public function count() : int
+    public function count(): int
     {
         return count($this->items);
     }
 
     /**
-     * Return the first item in the collection if it exists.
+     * Return the first rating in the collection if it exists.
      *
-     * @return RatingStruct|null
+     * @return Rating|null
      */
-    #[Pure] public function first() : ?RatingStruct
+    #[Pure] public function first(): ?Rating
     {
         if ($this->count() > 0) {
             return $this->items[0];
@@ -108,7 +126,7 @@ class RatingCollection
      * @param int $index
      * @return void
      */
-    private function indexInBounds(int $index) : void
+    private function indexInBounds(int $index): void
     {
         if ($this->count() === 0) {
             throw new InvalidArgumentException('The index is invalid.  There are no items in the collection.');
@@ -128,7 +146,7 @@ class RatingCollection
      *
      * @return bool
      */
-    public function isReadOnly() : bool
+    public function isReadOnly(): bool
     {
         return $this->readOnly;
     }
@@ -137,9 +155,9 @@ class RatingCollection
      * Return the item at the specified index.
      *
      * @param int $index
-     * @return RatingStruct
+     * @return Rating
      */
-    public function item(int $index) : RatingStruct
+    public function item(int $index): Rating
     {
         $this->indexInBounds($index);
 
@@ -147,21 +165,36 @@ class RatingCollection
     }
 
     /**
-     * Return the items in the collection as an array.
+     * Return the Rating items in the collection as an array.
      *
+     * @param bool $asItemArray
      * @return array
      */
-    public function items() : array
+    #[Pure] public function items(bool $asItemArray = false): array
     {
+        if ($asItemArray) {
+            if ($this->count() === 0) {
+                return [];
+            } else {
+                $items = [];
+                /** @var Rating $item */
+                foreach ($this->items as $item) {
+                    $items[] = $item->data()->toArray();
+                }
+
+                return $items;
+            }
+        }
+
         return $this->items;
     }
 
     /**
      * Return the last item in the collection if it exists.
      *
-     * @return RatingStruct|null
+     * @return Rating|null
      */
-    #[Pure] public function last() : ?RatingStruct
+    #[Pure] public function last(): ?Rating
     {
         if ($this->count() > 0) {
             $lastIndex = $this->count() - 1;
@@ -178,7 +211,7 @@ class RatingCollection
      *
      * @return void
      */
-    public function makeReadOnly() : void
+    public function makeReadOnly(): void
     {
         if (! $this->readOnly) {
             $this->readOnly = true;
@@ -227,12 +260,13 @@ class RatingCollection
      *
      * @return array
      */
-    public function scores() : array
+    #[Pure] public function scores() : array
     {
         $scores = [];
 
+        /* @var Rating $item */
         foreach($this->items as $item) {
-            $scores[] = $item->score;
+            $scores[] = $item->data()->score;
         }
 
         return $scores;

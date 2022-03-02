@@ -61,8 +61,8 @@ class SawtoothPattern
         $direction = 'none';
 
         for ($i = 0; $i < ($this->ratings->count() - 1); $i++) {
-            $value1 = ($this->ratings->item($i)->score * 10)/10;
-            $value2 = ($this->ratings->item($i + 1)->score * 10)/10;
+            $value1 = ($this->ratings->item($i)->data()->score * 10)/10;
+            $value2 = ($this->ratings->item($i + 1)->data()->score * 10)/10;
             $diff = abs($value2 - $value1);
 
             if ($diff >= $this::POINT_CHANGE) {

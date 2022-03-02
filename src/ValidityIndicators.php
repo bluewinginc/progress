@@ -70,7 +70,7 @@ class ValidityIndicators
             return false;
         }
 
-        return $this->ratings->first()->score > 32.0;
+        return $this->ratings->first()->data()->score > 32.0;
     }
 
     /**
