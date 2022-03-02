@@ -9,15 +9,14 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermAdult;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\MilestonesStruct;
-use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;
 
 class Milestones
 {
     protected MilestonesStruct|null $data = null;
-    protected RatingStruct|null $firstRating = null;
-    protected RatingStruct|null $lastRating = null;
+    protected Rating|null $firstRating = null;
+    protected Rating|null $lastRating = null;
     protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
     protected RatingCollection|null $ratings = null;
     protected float $change = 0.0;
@@ -53,17 +52,17 @@ class Milestones
 
         $this->firstRating = $this->ratings->first();
 
-        if ($this->firstRating->score < 0 || $this->firstRating->score > 40) {
+        if ($this->firstRating->data()->score < 0 || $this->firstRating->data()->score > 40) {
             throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
         $this->lastRating = $this->ratings->last();
 
-        if ($this->lastRating->score < 0 || $this->lastRating->score > 40) {
+        if ($this->lastRating->data()->score < 0 || $this->lastRating->data()->score > 40) {
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->change = ($this->lastRating->score - $this->firstRating->score);
+        $this->change = ($this->lastRating->data()->score - $this->firstRating->data()->score);
 
         $this->data->cscMet = $this->cscMet();
         $this->data->rcMet = !$this->data->cscMet && $this->rcMet();
@@ -92,11 +91,11 @@ class Milestones
             return false;
         }
 
-        if ($this->firstRating->score > $this->algorithm->clinicalCutoff) {
+        if ($this->firstRating->data()->score > $this->algorithm->clinicalCutoff) {
             return false;
         }
 
-        return ($this->lastRating->score > $this->algorithm->clinicalCutoff);
+        return ($this->lastRating->data()->score > $this->algorithm->clinicalCutoff);
     }
 
     /**

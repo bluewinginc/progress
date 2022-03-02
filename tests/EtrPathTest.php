@@ -3,7 +3,8 @@
 namespace Bluewing\Progress\Tests;
 
 use Bluewing\Progress\EtrPath;
-use Bluewing\Progress\RatingCollection;
+use Bluewing\Progress\Rater;
+use Bluewing\Progress\Rating;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -16,17 +17,10 @@ class EtrPathTest extends TestCase
     /** @test */
     public function it_returns_an_etr_using_short_term_algorithm()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT);
+        $firstRating = new Rating(score: 12.1);
 
-        $ratings->add(1, '', 12.1);
-        $ratings->add(2, '', 3.2);
-        $ratings->add(3, '', 9.7);
-        $ratings->add(4, '', 6.7);
-        $ratings->add(5, '', 8.9);
-        $ratings->add(6, '', 9.1);
-        $ratings->add(7, '', 10.2);
-
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        $etrPath = new EtrPath($rater, $firstRating, 3);
 
         $data = $etrPath->data();
 
@@ -37,45 +31,52 @@ class EtrPathTest extends TestCase
     /** @test */
     public function it_returns_an_etr_using_long_term_algorithm()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT);
 
-        $ratings->add(1, '', 12.1);
-        $ratings->add(2, '', 3.2);
-        $ratings->add(3, '', 9.7);
-        $ratings->add(4, '', 6.7);
-        $ratings->add(5, '', 8.9);
-        $ratings->add(6, '', 9.1);
-        $ratings->add(7, '', 10.2);
-        $ratings->add(8, '', 20.1);
-        $ratings->add(9, '', 32.0);
+        $firstRating = new Rating(score: 16.1);
 
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        $etrPath = new EtrPath($rater, $firstRating,10);
 
         $data = $etrPath->data();
 
         $this->assertCount(18, $data->values);
-        $this->assertEquals(12.1, $data->values[0]);
+        $this->assertEquals(16.1, $data->values[0]);
     }
 
     /** @test */
-    public function throws_invalid_argument_exception_using_st_adolescent_algorithm_and_no_ratings()
+    public function it_throws_an_exception_when_meetings_is_0()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT);
+
+        $firstRating = new Rating(score: 16.1);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('There are no ratings.');
+        $this->expectExceptionMessage('There meetings argument must be greater than 0.');
 
-        new EtrPath($this::ADOLESCENT, $ratings);
+        new EtrPath($rater, $firstRating, 0);
     }
 
     /** @test */
-    public function returns_8_items_using_st_adolescent_algorithm_and_1_rating()
+    public function it_throws_an_exception_when_meetings_is_less_than_0()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT);
 
-        $ratings->add(1, '', 19.2);
+        $firstRating = new Rating(score: 16.1);
 
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('There meetings argument must be greater than 0.');
+
+        new EtrPath($rater, $firstRating, -1);
+    }
+
+    /** @test */
+    public function it_returns_8_items_using_st_adolescent_algorithm()
+    {
+        $rater = new Rater($this::ADOLESCENT);
+
+        $firstRating = new Rating(score: 19.2);
+
+        $etrPath = new EtrPath($rater, $firstRating, 3);
 
         $data = $etrPath->data();
 
@@ -84,21 +85,13 @@ class EtrPathTest extends TestCase
     }
 
     /** @test */
-    public function returns_18_items_using_lt_adolescent_algorithm_and_1_rating()
+    public function it_returns_18_items_using_lt_adolescent_algorithm()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT, 1);
 
-        $ratings->add(1, '', 19.2);
-        $ratings->add(2, '', 3.2);
-        $ratings->add(3, '', 9.7);
-        $ratings->add(4, '', 6.7);
-        $ratings->add(5, '', 8.9);
-        $ratings->add(6, '', 9.1);
-        $ratings->add(7, '', 10.2);
-        $ratings->add(8, '', 20.1);
-        $ratings->add(9, '', 32.0);
+        $firstRating = new Rating(score: 19.2);
 
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        $etrPath = new EtrPath($rater, $firstRating, 9);
 
         $data = $etrPath->data();
 
@@ -109,11 +102,11 @@ class EtrPathTest extends TestCase
     /** @test */
     public function etr_array_contains_known_values_using_st_adolescent_algorithm()
     {
-        $ratings = new RatingCollection;
+        $rater = new Rater($this::ADOLESCENT);
 
-        $ratings->add(1, '', 19.2);
+        $firstRating = new Rating(score: 19.2);
 
-        $etrPath = new EtrPath($this::ADOLESCENT, $ratings);
+        $etrPath = new EtrPath($rater, $firstRating, 1);
 
         $data = $etrPath->data();
 

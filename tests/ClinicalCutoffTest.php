@@ -9,13 +9,17 @@ use PHPUnit\Framework\TestCase;
 
 class ClinicalCutoffTest extends TestCase
 {
+    const ADOLESCENT = 1;
+    const ADULT = 2;
+    const CHILD = 3;
+
     /** @test */
     public function return_data_when_using_short_term_adolescent_algorithm_and_no_rating_scores()
     {
         $ratings = new RatingCollection;
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -36,7 +40,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 14.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -57,7 +61,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 28.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -80,7 +84,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 38.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\LongTerm\LongTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -101,7 +105,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 28.1);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -124,7 +128,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 38.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(1, $ratings->count());
+        $algorithm = $manager->getFor($this::ADOLESCENT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\LongTerm\LongTermAdolescent', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -145,7 +149,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 25.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(2, $ratings->count());
+        $algorithm = $manager->getFor($this::ADULT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdult', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -168,7 +172,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 38.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(2, $ratings->count());
+        $algorithm = $manager->getFor($this::ADULT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\LongTerm\LongTermAdult', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -189,7 +193,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 25.1);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(2, $ratings->count());
+        $algorithm = $manager->getFor($this::ADULT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\ShortTerm\ShortTermAdult', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);
@@ -212,7 +216,7 @@ class ClinicalCutoffTest extends TestCase
         $ratings->add(0, '2020-01-16', 38.0);
 
         $manager = new AlgorithmManager;
-        $algorithm = $manager->getFor(2, $ratings->count());
+        $algorithm = $manager->getFor($this::ADULT, $ratings->count());
         $this->assertInstanceOf('Bluewing\Algorithms2015\LongTerm\LongTermAdult', $algorithm);
 
         $clinicalCutoff = new ClinicalCutoff($algorithm, $ratings);

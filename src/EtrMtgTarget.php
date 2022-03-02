@@ -10,32 +10,31 @@ use Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermAdult;
 use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Structs\EtrMtgTargetStruct;
-use Bluewing\Progress\Structs\RatingStruct;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\Pure;
 
 class EtrMtgTarget
 {
     protected EtrMtgTargetStruct|null $data = null;
-    protected RatingStruct|null $firstRating = null;
-    protected RatingStruct|null $lastRating = null;
+    protected Rating|null $firstRating = null;
+    protected Rating|null $lastRating = null;
     protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
     protected float $ratingChange = 0.0;
+    protected Rater|null $rater = null;
     protected RatingCollection|null $ratings = null;
-    protected int $raterAgeGroup = 0;
 
     /**
      * EtrMtgTarget constructor.
      * This uses the algorithm that is appropriate for the rater age group and number of meetings.
      *
-     * @param int $raterAgeGroup
+     * @param Rater $rater
      * @param RatingCollection $ratings
      */
-    public function __construct(int $raterAgeGroup, RatingCollection $ratings)
+    public function __construct(Rater $rater, RatingCollection $ratings)
     {
         $this->data = new EtrMtgTargetStruct;
 
-        $this->raterAgeGroup = $raterAgeGroup;
+        $this->rater = $rater;
 
         $this->ratings = $ratings;
 
@@ -51,11 +50,11 @@ class EtrMtgTarget
     {
         $manager = new AlgorithmManager;
 
-        $this->algorithm = $manager->getFor($this->raterAgeGroup, $this->ratings->count());
+        $this->algorithm = $manager->getFor($this->rater->data()->ageGroup, $this->ratings->count());
 
         $this->firstRating = $this->ratings->first();
 
-        if ($this->ratings->count() <= 1 || $this->firstRating->score > 32.0) {
+        if ($this->ratings->count() <= 1 || $this->firstRating->data()->score > 32.0) {
             $this->ratingChange = 0.0;
 
             $this->data->expectedChange = 0.0;
@@ -68,17 +67,17 @@ class EtrMtgTarget
             return;
         }
 
-        if ($this->firstRating->score < 0 || $this->firstRating->score > 40) {
+        if ($this->firstRating->data()->score < 0 || $this->firstRating->data()->score > 40) {
             throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
         $this->lastRating = $this->ratings->last();
 
-        if ($this->lastRating->score < 0 || $this->lastRating->score > 40) {
+        if ($this->lastRating->data()->score < 0 || $this->lastRating->data()->score > 40) {
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        $this->ratingChange = ($this->lastRating->score - $this->firstRating->score);
+        $this->ratingChange = ($this->lastRating->data()->score - $this->firstRating->data()->score);
 
         $this->data->expectedChange = $this->expectedChange();
         $this->data->met = $this->met();
@@ -109,7 +108,7 @@ class EtrMtgTarget
      */
     #[Pure] private function expectedChange() : float
     {
-        return $this->value($this->ratings->count()) - $this->firstRating->score;
+        return $this->value($this->ratings->count()) - $this->firstRating->data()->score;
     }
 
     /**
@@ -123,7 +122,7 @@ class EtrMtgTarget
      */
     #[Pure] private function met() : bool
     {
-        return $this->lastRating->score >= $this->value($this->ratings->count());
+        return $this->lastRating->data()->score >= $this->value($this->ratings->count());
     }
 
     /**
@@ -194,7 +193,7 @@ class EtrMtgTarget
         }
 
         $flattenMeeting = $this->algorithm->flattenMeeting;
-        $centeredAt20 = $this->firstRating->score - 20;
+        $centeredAt20 = $this->firstRating->data()->score - 20;
         $interceptMean = $this->algorithm->interceptMean + ($this->algorithm->intake * $centeredAt20);
         $linearMean = $this->algorithm->linearMean + ($this->algorithm->linearByIntake * $centeredAt20);
         $quadraticMean = $this->algorithm->quadraticMean + ($this->algorithm->quadraticByIntake * $centeredAt20);
@@ -202,7 +201,7 @@ class EtrMtgTarget
         $intercept = 1;
 
         if ($meeting === 1) {
-            return $this->firstRating->score;     // Intake meeting
+            return $this->firstRating->data()->score;     // Intake meeting
         }
 
         // This section of code uses the algorithm's flatten_meeting property to flatten the trajectory of the etr

@@ -2,10 +2,26 @@
 
 namespace Bluewing\Progress\Structs;
 
+use Bluewing\Progress\Rater;
+use Bluewing\Progress\Rating;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
+
 class EtrPathStruct
 {
-    public RatingStruct|null $firstRating = null;
+    public Rater|null $rater = null;
+    public Rating|null $firstRating = null;
     public int $meetings = 0;
-    public int $raterAgeGroup = 0;
     public array $values = [];
+
+    #[Pure] #[ArrayShape(['rater' => "array", 'firstRating' => "array", 'meetings' => "int", 'values' => "array"])]
+    public function toArray(): array
+    {
+        return [
+            'rater' => $this->rater->data()->toArray(),
+            'firstRating' => $this->firstRating->data()->toArray(),
+            'meetings' => $this->meetings,
+            'values' => $this->values
+        ];
+    }
 }
