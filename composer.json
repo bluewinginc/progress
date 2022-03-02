@@ -2,6 +2,7 @@
     "name": "bluewinginc/progress",
     "description": "Progress calculator.",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Ron Waters",
