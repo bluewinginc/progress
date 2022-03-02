@@ -23,7 +23,7 @@
     },
     "prefer-stable": true,
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.1",
         "bluewinginc/algorithms-2015": "^1.0"
     }
 }
