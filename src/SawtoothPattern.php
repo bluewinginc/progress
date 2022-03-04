@@ -34,7 +34,7 @@ class SawtoothPattern
      *
      * @return SawtoothPatternStruct
      */
-    public function data() : SawtoothPatternStruct
+    public function data(): SawtoothPatternStruct
     {
         return $this->data;
     }
@@ -44,7 +44,7 @@ class SawtoothPattern
      *
      * @return int
      */
-    private function calculateSawtoothDirectionChanges() : int
+    private function calculateSawtoothDirectionChanges(): int
     {
         $directionChanges = 0;
 
@@ -89,7 +89,7 @@ class SawtoothPattern
      *
      * @return bool
      */
-    #[Pure] private function has() : bool
+    #[Pure] private function has(): bool
     {
         if ($this->ratings->count() < $this::DIRECTION_CHANGES + 1) {
             return false;
@@ -104,7 +104,7 @@ class SawtoothPattern
      *
      * @return int
      */
-    private function teeth() : int
+    private function teeth(): int
     {
         if ($this->data->directionChanges < 1) {
             return 0;

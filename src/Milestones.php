@@ -41,7 +41,7 @@ class Milestones
      * Calculate and populate data.
      * @return void
      */
-    private function calculateAndPopulateData() : void
+    private function calculateAndPopulateData(): void
     {
         if ($this->ratings->count() < 2) {
             $this->data->cscMet = false;
@@ -74,7 +74,7 @@ class Milestones
      *
      * @return MilestonesStruct
      */
-    public function data() : MilestonesStruct
+    public function data(): MilestonesStruct
     {
         return $this->data;
     }
@@ -85,7 +85,7 @@ class Milestones
      *
      * @return bool
      */
-    #[Pure] private function cscMet() : bool
+    #[Pure] private function cscMet(): bool
     {
         if (! $this->rcMet()) {
             return false;
@@ -104,7 +104,7 @@ class Milestones
      *
      * @return bool
      */
-    private function rcMet() : bool
+    private function rcMet(): bool
     {
         return ($this->change >= $this->algorithm->reliableChangeIndex);
     }

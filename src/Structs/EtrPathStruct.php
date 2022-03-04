@@ -13,15 +13,17 @@ class EtrPathStruct
     public Rating|null $firstRating = null;
     public int $meetings = 0;
     public array $values = [];
+    public array $valuesAsString = [];
 
-    #[Pure] #[ArrayShape(['rater' => "array", 'firstRating' => "array", 'meetings' => "int", 'values' => "array"])]
+    #[Pure] #[ArrayShape(['rater' => "array", 'firstRating' => "array", 'meetings' => "int", 'values' => "array", 'valuesAsString' => "array"])]
     public function toArray(): array
     {
         return [
             'rater' => $this->rater->data()->toArray(),
             'firstRating' => $this->firstRating->data()->toArray(),
             'meetings' => $this->meetings,
-            'values' => $this->values
+            'values' => $this->values,
+            'valuesAsString' => $this->valuesAsString
         ];
     }
 }

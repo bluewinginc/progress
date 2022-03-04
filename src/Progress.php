@@ -3,6 +3,7 @@
 namespace Bluewing\Progress;
 
 use Bluewing\Algorithms2015\AlgorithmManager;
+use Bluewing\Progress\Structs\AlgorithmStruct;
 use Bluewing\Progress\Structs\ProgressStruct;
 use InvalidArgumentException;
 
@@ -28,6 +29,8 @@ class Progress
         $this->progress->rater = $rater;
         $this->progress->ratings = $ratings;
 
+        $this->progress->ratingsCount = $ratings->count();
+
         $this->progress->firstRating = $this->progress->ratings->first();
 
         if (is_null($this->progress->firstRating)) {
@@ -50,16 +53,44 @@ class Progress
 
         // Only update the rating change value if there is one or more ratings.
         if ($this->progress->ratings->count() > 0) {
-            $this->progress->ratingChange = ($this->progress->lastRating->data()->score - $this->progress->firstRating->data()->score);
+            $this->progress->ratingChange = round($this->progress->lastRating->data()->score - $this->progress->firstRating->data()->score, 1);
+            $this->progress->ratingChangeAsString = number_format($this->progress->ratingChange, 1);
         }
 
         // Algorithms
         $manager = new AlgorithmManager;
 
-        $this->progress->algorithm = $manager->getFor($this->progress->rater->data()->ageGroup, $this->progress->ratings->count());
-        $this->progress->algorithmShortTerm = $manager->getFor($this->progress->rater->data()->ageGroup, 0);
+        $algorithm = $manager->getFor($this->progress->rater->data()->ageGroup, $this->progress->ratings->count());
+        $algorithmShortTerm = $manager->getFor($this->progress->rater->data()->ageGroup, 0);
 
-        $this->progress->effectSize = ($this->progress->ratingChange / $this->progress->algorithm->standardDeviation);
+        // algorithm
+        $algorithmStruct = new AlgorithmStruct;
+        $algorithmStruct->version = $algorithm->info;
+        $algorithmStruct->clinicalCutoff = $algorithm->clinicalCutoff;
+        $algorithmStruct->clinicalCutoffAsString = number_format($algorithm->clinicalCutoff, 1);
+        $algorithmStruct->reliableChangeIndex = $algorithm->reliableChangeIndex;
+        $algorithmStruct->reliableChangeIndexAsString = number_format($algorithm->reliableChangeIndex, 2);
+        $algorithmStruct->standardDeviation = $algorithm->standardDeviation;
+        $algorithmStruct->standardDeviationAsString = number_format($algorithm->standardDeviation, 2);
+        $algorithmStruct->srsClinicalCutoff = 36;
+        $algorithmStruct->srsClinicalCutoffAsString = number_format(36, 1);
+        $this->progress->algorithm = $algorithmStruct;
+
+        // algorithmShortTerm
+        $algorithmStruct = new AlgorithmStruct;
+        $algorithmStruct->version = $algorithmShortTerm->info;
+        $algorithmStruct->clinicalCutoff = $algorithmShortTerm->clinicalCutoff;
+        $algorithmStruct->clinicalCutoffAsString = number_format($algorithmShortTerm->clinicalCutoff, 1);
+        $algorithmStruct->reliableChangeIndex = $algorithmShortTerm->reliableChangeIndex;
+        $algorithmStruct->reliableChangeIndexAsString = number_format($algorithmShortTerm->reliableChangeIndex, 2);
+        $algorithmStruct->standardDeviation = $algorithmShortTerm->standardDeviation;
+        $algorithmStruct->standardDeviationAsString = number_format($algorithmShortTerm->standardDeviation, 2);
+        $algorithmStruct->srsClinicalCutoff = 36;
+        $algorithmStruct->srsClinicalCutoffAsString = number_format(36, 1);
+        $this->progress->algorithmShortTerm = $algorithmStruct;
+
+        $this->progress->effectSize = round($this->progress->ratingChange / $algorithm->standardDeviation, 2);
+        $this->progress->effectSizeAsString = number_format($this->progress->effectSize, 2);
 
         // ETR Meeting Target
         $etrMtgTarget = new EtrMtgTarget($this->progress->rater, $this->progress->ratings);
@@ -70,11 +101,11 @@ class Progress
         $this->progress->etrTarget = $etrTarget->data();
 
         // Validity Indicators
-        $validityIndicators = new ValidityIndicators($this->progress->algorithm, $this->progress->ratings);
+        $validityIndicators = new ValidityIndicators($algorithm, $this->progress->ratings);
         $this->progress->validityIndicators = $validityIndicators->data();
 
         // Milestones
-        $milestones = new Milestones($this->progress->algorithm, $this->progress->ratings);
+        $milestones = new Milestones($algorithm, $this->progress->ratings);
         $this->progress->milestones = $milestones->data();
 
         // Exclusions
@@ -87,7 +118,7 @@ class Progress
      *
      * @return ProgressStruct
      */
-    public function data() : ProgressStruct
+    public function data(): ProgressStruct
     {
         return $this->progress;
     }

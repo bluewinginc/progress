@@ -33,7 +33,7 @@ class Exclusions
      *
      * @return ExclusionsStruct
      */
-    public function data() : ExclusionsStruct
+    public function data(): ExclusionsStruct
     {
         return $this->data;
     }

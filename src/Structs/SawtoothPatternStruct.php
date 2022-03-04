@@ -3,7 +3,6 @@
 namespace Bluewing\Progress\Structs;
 
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class SawtoothPatternStruct
 {

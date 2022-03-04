@@ -2,28 +2,26 @@
 
 namespace Bluewing\Progress\Structs;
 
-use Bluewing\Algorithms2015\LongTerm\LongTermAdolescent;
-use Bluewing\Algorithms2015\LongTerm\LongTermAdult;
-use Bluewing\Algorithms2015\LongTerm\LongTermChild;
-use Bluewing\Algorithms2015\ShortTerm\ShortTermAdolescent;
-use Bluewing\Algorithms2015\ShortTerm\ShortTermAdult;
-use Bluewing\Algorithms2015\ShortTerm\ShortTermChild;
 use Bluewing\Progress\Rater;
 use Bluewing\Progress\Rating;
 use Bluewing\Progress\RatingCollection;
+use JetBrains\PhpStorm\Pure;
 
 class ProgressStruct
 {
     public Rater|null $rater = null;
+    public int $ratingsCount = 0;
     public RatingCollection|null $ratings = null;
     public Rating|null $firstRating = null;
     public Rating|null $lastRating = null;
     public float $ratingChange = 0.0;
+    public string $ratingChangeAsString = '0.0';
     public float|null $effectSize = null;
-    public LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
-    public LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithmShortTerm = null;
-    public EtrMtgTargetStruct|null $etrMtgTarget = null;
-    public EtrTargetStruct|null $etrTarget = null;
+    public string|null $effectSizeAsString = null;
+    public AlgorithmStruct|null $algorithm = null;
+    public AlgorithmStruct|null $algorithmShortTerm = null;
+    public EtrStruct|null $etrMtgTarget = null;
+    public EtrStruct|null $etrTarget = null;
     public MilestonesStruct|null $milestones = null;
     public ValidityIndicatorsStruct|null $validityIndicators = null;
     public ExclusionsStruct|null $exclusions = null;
@@ -33,16 +31,18 @@ class ProgressStruct
      *
      * @return array
      */
-    public function toArray(): array
+    #[Pure] public function toArray(): array
     {
         return [
             'rater' => $this->rater->data()->toArray(),
-            'ratingsCount' => $this->ratings->count(),
+            'ratingsCount' => $this->ratingsCount,
             'ratings' => $this->ratings->items(true),
             'firstRating' => $this->firstRating->data()->toArray(),
             'lastRating' => $this->lastRating->data()->toArray(),
             'ratingChange' => $this->ratingChange,
+            'ratingChangeAsString' => $this->ratingChangeAsString,
             'effectSize' => $this->effectSize,
+            'effectSizeAsString' => $this->effectSizeAsString,
             'algorithm' => $this->algorithm->toArray(),
             'algorithmShortTerm' => $this->algorithmShortTerm->toArray(),
             'etrMtgTarget' => $this->etrMtgTarget->toArray(),
@@ -51,15 +51,5 @@ class ProgressStruct
             'validityIndicators' => $this->validityIndicators->toArray(),
             'exclusions' => $this->exclusions->toArray()
         ];
-    }
-
-    /**
-     * Return the data as JSON.
-     *
-     * @return false|string
-     */
-    public function toJson(): false|string
-    {
-        return json_encode($this->toArray());
     }
 }

@@ -43,7 +43,7 @@ class ValidityIndicators
      *
      * @return ValidityIndicatorsStruct
      */
-    public function data() : ValidityIndicatorsStruct
+    public function data(): ValidityIndicatorsStruct
     {
         return $this->data;
     }
@@ -53,7 +53,7 @@ class ValidityIndicators
      *
      * @return ClinicalCutoffStruct
      */
-    private function clinicalCutoff() : ClinicalCutoffStruct
+    private function clinicalCutoff(): ClinicalCutoffStruct
     {
         $cc = new ClinicalCutoff($this->algorithm, $this->ratings);
         return $cc->data();
@@ -64,7 +64,7 @@ class ValidityIndicators
      *
      * @return bool
      */
-    #[Pure] private function firstRatingAbove32() : bool
+    #[Pure] private function firstRatingAbove32(): bool
     {
         if ($this->ratings->count() === 0) {
             return false;
@@ -78,7 +78,7 @@ class ValidityIndicators
      *
      * @return SawtoothPatternStruct
      */
-    private function sawtoothPattern() : SawtoothPatternStruct
+    private function sawtoothPattern(): SawtoothPatternStruct
     {
         $stp = new SawtoothPattern($this->ratings);
         return $stp->data();
@@ -89,7 +89,7 @@ class ValidityIndicators
      *
      * @return bool
      */
-    #[Pure] private function zeroOrOneMeetings() : bool
+    #[Pure] private function zeroOrOneMeetings(): bool
     {
         return ($this->ratings->count() < 2);
     }

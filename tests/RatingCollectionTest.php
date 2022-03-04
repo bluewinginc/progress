@@ -174,7 +174,7 @@ class RatingCollectionTest extends TestCase
 
         $itemAsArray = $ratings->items(true)[0];
 
-        $this->assertEquals(['id' => NULL, 'dateCompleted' => NULL, 'score' => 2.3], $itemAsArray);
+        $this->assertEquals(['id' => NULL, 'dateCompleted' => NULL, 'score' => 2.3, 'scoreAsString' => '2.3'], $itemAsArray);
     }
 
     /** @test */

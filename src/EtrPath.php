@@ -16,7 +16,6 @@ class EtrPath
 {
     protected EtrPathStruct|null $data = null;
     protected LongTermAdolescent|LongTermAdult|LongTermChild|ShortTermAdolescent|ShortTermAdult|ShortTermChild|null $algorithm = null;
-    protected array $values = [];
 
     /**
      * EtrPath constructor.
@@ -51,31 +50,7 @@ class EtrPath
 
         $this->algorithm = $manager->getFor($this->data->rater->data()->ageGroup, $this->data->meetings);
 
-        $this->data->values = $this->calculateValues();
-    }
-
-    /**
-     * Return the EtrPathStruct.
-     *
-     * @return EtrPathStruct
-     */
-    public function data(): EtrPathStruct
-    {
-        return $this->data;
-    }
-
-    /**
-     * Return the expected treatment response (etr) for each meeting.
-     * Return an array with the following fields: meeting, caption, value
-     *
-     * 1 Skipped
-     * 2 20.2
-     *
-     * @return array
-     * @throws InvalidArgumentException
-     */
-    private function calculateValues(): array
-    {
+        // Get the expected treatment response (etr) for each meeting.
         $flattenMeeting = $this->algorithm->flattenMeeting;
         $maxMeetings = $this->algorithm->maxMeetings;
         $centeredAt20 = $this->data->firstRating->data()->score - 20;
@@ -91,8 +66,9 @@ class EtrPath
         }
 
         // Add the intake session.
-        $values = [];
-        $values[] = $this->data->firstRating->data()->score;
+        $value = $this->data->firstRating->data()->score;
+        $this->data->values[] = $value;
+        $this->data->valuesAsString[] = number_format($value, 1);
 
         // Add the remaining values.
         for ($i = 1; $i < $this->data->meetings; $i++) {
@@ -106,9 +82,20 @@ class EtrPath
             $quadratic = $linear * $linear;
             $cubic = $linear * $linear * $linear;
             $value = ($interceptMean * $intercept) + ($linearMean * $linear) + ($quadraticMean * $quadratic) + ($cubicMean * $cubic);
-            $values[] = round($value, 1, PHP_ROUND_HALF_UP);
-        }
 
-        return $values;
+            $roundedValue = round($value, 1, PHP_ROUND_HALF_UP);
+            $this->data->values[] = $roundedValue;
+            $this->data->valuesAsString[] = number_format($roundedValue, 1);
+        }
+    }
+
+    /**
+     * Return the EtrPathStruct.
+     *
+     * @return EtrPathStruct
+     */
+    public function data(): EtrPathStruct
+    {
+        return $this->data;
     }
 }

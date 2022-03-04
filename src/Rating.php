@@ -16,6 +16,7 @@ class Rating
         $this->ratingStruct->id = $id;
         $this->ratingStruct->dateCompleted = $dateCompleted;
         $this->ratingStruct->score = $score;
+        $this->ratingStruct->scoreAsString = number_format($score, 1);
 
         $this->check();
     }
@@ -70,6 +71,7 @@ class Rating
         $this->ratingStruct->id = is_int($id) ? $id : null;
         $this->ratingStruct->dateCompleted = is_string($dateCompleted) ? $dateCompleted : null;
         $this->ratingStruct->score = is_float($score) ? $score : -1;
+        $this->ratingStruct->scoreAsString = number_format($score , 1);
 
         $this->check();
     }

@@ -161,7 +161,7 @@ class EtrMtgTargetTest extends TestCase
 
         $etrMtgTarget = new EtrMtgTarget($rater, $ratings);
 
-        $value = $etrMtgTarget->value(5);
+        $value = $etrMtgTarget->value(12.1, 5);
 
         $this->assertEquals(22.15, round($value, 2, PHP_ROUND_HALF_UP));
     }
@@ -176,7 +176,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertEquals(0.0, $etrMtgTargetData->expectedChange);
         $this->assertFalse($etrMtgTargetData->met);
@@ -199,7 +199,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertEquals(3.74, round($etrMtgTargetData->expectedChange, 2, PHP_ROUND_HALF_UP));
         $this->assertFalse($etrMtgTargetData->met);
@@ -222,7 +222,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertFalse($etrMtgTargetData->met);
     }
@@ -240,7 +240,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertTrue($etrMtgTargetData->met);
     }
@@ -258,7 +258,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertEquals(0.0, $etrMtgTargetData->expectedChange);
         $this->assertFalse($etrMtgTargetData->met);
@@ -278,7 +278,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertEquals(0.0, $etrMtgTargetData->expectedChange);
         $this->assertFalse($etrMtgTargetData->met);
@@ -301,7 +301,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertEquals(22.94, round($etrMtgTargetData->value, 2, PHP_ROUND_HALF_UP));
     }
@@ -319,7 +319,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertFalse($etrMtgTargetData->met);
     }
@@ -337,7 +337,7 @@ class EtrMtgTargetTest extends TestCase
         $this->assertInstanceOf('Bluewing\Progress\EtrMtgTarget', $etrMtgTarget);
 
         $etrMtgTargetData = $etrMtgTarget->data();
-        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrMtgTargetStruct', $etrMtgTargetData);
+        $this->assertInstanceOf('Bluewing\Progress\Structs\EtrStruct', $etrMtgTargetData);
 
         $this->assertTrue($etrMtgTargetData->met);
     }

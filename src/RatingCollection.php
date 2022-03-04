@@ -223,7 +223,7 @@ class RatingCollection
      *
      * @return $this
      */
-    public function remove() : RatingCollection
+    public function remove(): RatingCollection
     {
         if ($this->readOnly) {
             return $this;
@@ -240,7 +240,7 @@ class RatingCollection
      * @param int $index
      * @return $this
      */
-    public function removeAt(int $index) : RatingCollection
+    public function removeAt(int $index): RatingCollection
     {
         if ($this->readOnly) {
             return $this;
@@ -260,7 +260,7 @@ class RatingCollection
      *
      * @return array
      */
-    #[Pure] public function scores() : array
+    #[Pure] public function scores(): array
     {
         $scores = [];
 

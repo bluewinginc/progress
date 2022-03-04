@@ -31,6 +31,7 @@ class ClinicalCutoff
         $this->ratings = $ratings;
 
         $this->data->value = $this->algorithm->clinicalCutoff;
+        $this->data->valueAsString = number_format($this->data->value, 1);
 
         $this->calculateAndPopulateData();
     }
@@ -40,12 +41,13 @@ class ClinicalCutoff
      *
      * @return void
      */
-    private function calculateAndPopulateData() : void
+    private function calculateAndPopulateData(): void
     {
         $firstRating = $this->ratings->first();
 
         if (is_null($firstRating)) {
-            $this->data->firstRatingScore = 0.0;
+            $this->data->firstRatingScore = null;
+            $this->data->firstRatingScoreAsString = null;
             $this->data->isAbove = false;
             return;
         }
@@ -55,6 +57,7 @@ class ClinicalCutoff
         }
 
         $this->data->firstRatingScore = $firstRating->data()->score;
+        $this->data->firstRatingScoreAsString = number_format($this->data->firstRatingScore, 1);
         $this->data->isAbove = ($firstRating->data()->score > $this->data->value);
     }
 
@@ -63,7 +66,7 @@ class ClinicalCutoff
      *
      * @return ClinicalCutoffStruct
      */
-    public function data() : ClinicalCutoffStruct
+    public function data(): ClinicalCutoffStruct
     {
         return $this->data;
     }
