@@ -97,7 +97,7 @@ class RatingTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_a_populated_array()
+    public function it_returns_a_fully_populated_array_when_the_just_scores_argument_is_false()
     {
         $rating = new Rating(1, '2021-01-02', 10.2);
         $array = $rating->data()->toArray();
@@ -106,5 +106,16 @@ class RatingTest extends TestCase
         $this->assertEquals(1, $array['id']);
         $this->assertEquals('2021-01-02', $array['dateCompleted']);
         $this->assertEquals(10.2, $array['score']);
+    }
+
+    /** @test */
+    public function it_returns_an_array_of_scores_when_the_just_scores_argument_is_true()
+    {
+        $rating = new Rating(1, '2021-01-02', 10.2);
+        $array = $rating->data()->toArray(true);
+
+        $this->assertIsArray($rating->data()->toArray(true));
+        $this->assertEquals(10.2, $array['score']);
+        $this->assertEquals("10.2", $array['scoreAsString']);
     }
 }

@@ -14,11 +14,19 @@ class RatingStruct
     /**
      * Return the RatingStruct as an array.
      *
+     * @param bool $justScores
      * @return array
      */
     #[ArrayShape(['id' => "int|null", 'dateCompleted' => "null|string", 'score' => "float", 'scoreAsString' => "string"])]
-    public function toArray(): array
+    public function toArray(bool $justScores = false): array
     {
+        if ($justScores) {
+            return [
+                'score' => $this->score,
+                'scoreAsString' => $this->scoreAsString,
+            ];
+        }
+
         return [
             'id' => $this->id,
             'dateCompleted' => $this->dateCompleted,

@@ -13,10 +13,7 @@ class RatingCollection
     /**
      * RatingCollection constructor.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     /**
      * Add a rating to the collection.  Use named argument to just pass a score.
@@ -55,9 +52,7 @@ class RatingCollection
      */
     public function addRating(Rating $rating): void
     {
-        if (! $this->readOnly) {
-            $this->items[] = $rating;
-        }
+        if (! $this->readOnly) $this->items[] = $rating;
     }
 
     /**
@@ -113,9 +108,7 @@ class RatingCollection
      */
     #[Pure] public function first(): ?Rating
     {
-        if ($this->count() > 0) {
-            return $this->items[0];
-        }
+        if ($this->count() > 0) return $this->items[0];
 
         return null;
     }
@@ -145,6 +138,7 @@ class RatingCollection
      * Determine if the collection is read only.
      *
      * @return bool
+     * @noinspection PhpUnused
      */
     public function isReadOnly(): bool
     {
@@ -168,9 +162,10 @@ class RatingCollection
      * Return the Rating items in the collection as an array.
      *
      * @param bool $asItemArray
+     * @param bool $justScores
      * @return array
      */
-    #[Pure] public function items(bool $asItemArray = false): array
+    #[Pure] public function items(bool $asItemArray = false, bool $justScores = false): array
     {
         if ($asItemArray) {
             if ($this->count() === 0) {
@@ -179,7 +174,7 @@ class RatingCollection
                 $items = [];
                 /** @var Rating $item */
                 foreach ($this->items as $item) {
-                    $items[] = $item->data()->toArray();
+                    $items[] = $item->data()->toArray($justScores);
                 }
 
                 return $items;
@@ -210,12 +205,11 @@ class RatingCollection
      * Items will not be able to be added or removed from the collection.
      *
      * @return void
+     * @noinspection PhpUnused
      */
     public function makeReadOnly(): void
     {
-        if (! $this->readOnly) {
-            $this->readOnly = true;
-        }
+        if (! $this->readOnly) $this->readOnly = true;
     }
 
     /**
@@ -225,9 +219,7 @@ class RatingCollection
      */
     public function remove(): RatingCollection
     {
-        if ($this->readOnly) {
-            return $this;
-        }
+        if ($this->readOnly) return $this;
 
         $this->items = [];
 
@@ -242,9 +234,7 @@ class RatingCollection
      */
     public function removeAt(int $index): RatingCollection
     {
-        if ($this->readOnly) {
-            return $this;
-        }
+        if ($this->readOnly) return $this;
 
         $this->indexInBounds($index);
 

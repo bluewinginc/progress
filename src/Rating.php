@@ -52,17 +52,11 @@ class Rating
      */
     public function fromArray(array $data): void
     {
-       if (! array_key_exists('id', $data)) {
-           throw new InvalidArgumentException('The id key is required.');
-       }
+        if (! array_key_exists('id', $data)) throw new InvalidArgumentException('The id key is required.');
 
-        if (! array_key_exists('dateCompleted', $data)) {
-            throw new InvalidArgumentException('The dateCompleted key is required.');
-        }
+        if (! array_key_exists('dateCompleted', $data)) throw new InvalidArgumentException('The dateCompleted key is required.');
 
-        if (! array_key_exists('score', $data)) {
-            throw new InvalidArgumentException('The score key is required.');
-        }
+        if (! array_key_exists('score', $data)) throw new InvalidArgumentException('The score key is required.');
 
         $id = $data['id'];
         $dateCompleted = $data['dateCompleted'];

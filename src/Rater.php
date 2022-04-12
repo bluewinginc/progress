@@ -22,6 +22,7 @@ class Rater
         $this->raterStruct = new RaterStruct;
 
         $this->raterStruct->ageGroup = $ageGroup;
+
         if ($ageGroup === 1) {
             $this->raterStruct->ageGroupAsString = 'Adolescent';
         } elseif ($ageGroup === 2) {

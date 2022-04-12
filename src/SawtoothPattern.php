@@ -48,10 +48,8 @@ class SawtoothPattern
     {
         $directionChanges = 0;
 
-        // If there are less than 2 ratings, there can't be any direction changes.
-        if ($this->ratings->count() < 2) {
-            return 0;
-        }
+        // INFO: If there are less than 2 ratings, there can't be any direction changes.
+        if ($this->ratings->count() < 2) return 0;
 
         // 2019-03-12 - LOGIC CHANGE
         // The objective is to flag four (4) consecutive or non-consecutive direction changes of six (6) points or more.
@@ -67,14 +65,12 @@ class SawtoothPattern
 
             if ($diff >= $this::POINT_CHANGE) {
                 if ($value2 > $value1) {
-                    if ($direction === 'down' || $direction === 'none') {
-                        $directionChanges += 1;
-                    }
+                    if ($direction === 'down' || $direction === 'none') $directionChanges += 1;
+
                     $direction = 'up';
                 } else {
-                    if ($direction === 'up' || $direction === 'none') {
-                        $directionChanges += 1;
-                    }
+                    if ($direction === 'up' || $direction === 'none') $directionChanges += 1;
+
                     $direction = 'down';
                 }
             }
@@ -91,9 +87,7 @@ class SawtoothPattern
      */
     #[Pure] private function has(): bool
     {
-        if ($this->ratings->count() < $this::DIRECTION_CHANGES + 1) {
-            return false;
-        }
+        if ($this->ratings->count() < $this::DIRECTION_CHANGES + 1) return false;
 
         return ($this->data->directionChanges >= $this::DIRECTION_CHANGES);
     }
@@ -106,9 +100,7 @@ class SawtoothPattern
      */
     private function teeth(): int
     {
-        if ($this->data->directionChanges < 1) {
-            return 0;
-        }
+        if ($this->data->directionChanges < 1) return 0;
 
         return $this->data->directionChanges - 1;
     }

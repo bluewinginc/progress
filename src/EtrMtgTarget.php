@@ -96,9 +96,7 @@ class EtrMtgTarget
      */
     #[Pure] public function data(): EtrStruct
     {
-        if ($this->ratings->count() === 0) {
-            return new EtrStruct;
-        }
+        if ($this->ratings->count() === 0) return new EtrStruct;
 
         return $this->data;
     }
@@ -141,24 +139,20 @@ class EtrMtgTarget
      */
     #[Pure] private function metPercent(float $firstRatingScore, float $lastRatingScore): float
     {
-        // When the expected_change is 0.0, a division by 0 error can happen.
-        // When the expected change is less than 0.0, it means the first rating score is above 32.
-        // In these cases always return 0.0.
-        if ($this->expectedChange($firstRatingScore) <= 0.0) {
-            return 0.0;
-        }
+        // INFO: When the expected_change is 0.0, a division by 0 error can happen.
+        //  When the expected change is less than 0.0, it means the first rating score is above 32.
+        //  In these cases always return 0.0.
+
+        if ($this->expectedChange($firstRatingScore) <= 0.0) return 0.0;
 
         $change = ($lastRatingScore - $firstRatingScore);
 
         $etrTargetMeetingMetPercent = ($change / $this->expectedChange($firstRatingScore)) * 100;
 
-        if ($etrTargetMeetingMetPercent > (float)100) {
-            return 100.0;
-        } else if ($etrTargetMeetingMetPercent < (float)0) {
-            return 0.0;
-        } else {
-            return $etrTargetMeetingMetPercent;
-        }
+        if ($etrTargetMeetingMetPercent > (float)100) return 100.0;
+        if ($etrTargetMeetingMetPercent < (float)0) return 0.0;
+
+        return $etrTargetMeetingMetPercent;
     }
 
     /**
@@ -175,12 +169,10 @@ class EtrMtgTarget
      */
     private function predictedChangePercentMet(float $firstRatingScore, float $lastRatingScore, float $predictedChangeIndex): bool
     {
-        // When the expected_change is 0.0, a division by 0 error can happen.
-        // When the expected change is less than 0.0, it means the first rating score is above 32.
-        // In these cases always return 0.0.
-        if ($this->expectedChange($firstRatingScore) <= 0.0) {
-            return 0.0;
-        }
+        // INFO: When the expected_change is 0.0, a division by 0 error can happen.
+        //  When the expected change is less than 0.0, it means the first rating score is above 32.
+        //  In these cases always return 0.0.
+        if ($this->expectedChange($firstRatingScore) <= 0.0) return 0.0;
 
         if ($predictedChangeIndex < 0 || $predictedChangeIndex > 100) {
             throw new InvalidArgumentException('The predictedChangeIndex parameter is invalid.  It must be between 0.0 and 100.0.');
@@ -202,9 +194,7 @@ class EtrMtgTarget
      */
     #[Pure] public function value(float $firstRatingScore, int $meeting): float
     {
-        if ($meeting < 1 || $meeting > $this->ratings->count()) {
-            return 0.0;
-        }
+        if ($meeting < 1 || $meeting > $this->ratings->count()) return 0.0;
 
         $flattenMeeting = $this->algorithm->flattenMeeting;
         $centeredAt20 = $firstRatingScore - 20;
@@ -214,18 +204,14 @@ class EtrMtgTarget
         $cubicMean = $this->algorithm->cubicMean + ($this->algorithm->cubicByIntake * $centeredAt20);
         $intercept = 1;
 
-        if ($meeting === 1) {
-            return $firstRatingScore;     // Intake meeting
-        }
+        if ($meeting === 1) return $firstRatingScore;     // Intake meeting
 
-        // This section of code uses the algorithm's flatten_meeting property to flatten the trajectory of the etr
-        // at the outer tail as it can get erratic (it drops after it reaches the max altitude).
+        // INFO: This section of code uses the algorithm's flatten_meeting property to flatten the trajectory of the etr
+        //  at the outer tail as it can get erratic (it drops after it reaches the max altitude).
 
         $i = $meeting - 1;
 
-        if ($i >= $flattenMeeting) {
-            $i = $flattenMeeting;
-        }
+        if ($i >= $flattenMeeting) $i = $flattenMeeting;
 
         $linear	= $i;
         $quadratic = $linear * $linear;

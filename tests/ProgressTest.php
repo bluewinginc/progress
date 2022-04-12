@@ -71,8 +71,6 @@ class ProgressTest extends TestCase
         $d = $progress->data();
         $a = $d->toArray();
 
-        var_dump($a);
-
         // rater
         $key = 'rater';
         $this->assertEquals($d->rater->data()->ageGroup, $a[$key]['ageGroup']);

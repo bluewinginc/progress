@@ -33,9 +33,7 @@ class Progress
 
         $this->progress->firstRating = $this->progress->ratings->first();
 
-        if (is_null($this->progress->firstRating)) {
-            $this->progress->firstRating = null;
-        }
+        if (is_null($this->progress->firstRating)) $this->progress->firstRating = null;
 
         if ($this->progress->firstRating->data()->score < 0 || $this->progress->firstRating->data()->score > 40) {
             throw new InvalidArgumentException('The first rating score is invalid. It must be between 0.0 and 40.0.');
@@ -43,27 +41,24 @@ class Progress
 
         $this->progress->lastRating = $this->progress->ratings->last();
 
-        if (is_null($this->progress->lastRating)) {
-            $this->progress->lastRating = null;
-        }
+        if (is_null($this->progress->lastRating)) $this->progress->lastRating = null;
 
         if ($this->progress->lastRating->data()->score < 0 || $this->progress->lastRating->data()->score > 40) {
             throw new InvalidArgumentException('The last rating score is invalid. It must be between 0.0 and 40.0.');
         }
 
-        // Only update the rating change value if there is one or more ratings.
+        // INFO: Only update the rating change value if there is one or more ratings.
         if ($this->progress->ratings->count() > 0) {
             $this->progress->ratingChange = round($this->progress->lastRating->data()->score - $this->progress->firstRating->data()->score, 1);
             $this->progress->ratingChangeAsString = number_format($this->progress->ratingChange, 1);
         }
 
-        // Algorithms
+        // INFO: Algorithms
         $manager = new AlgorithmManager;
 
         $algorithm = $manager->getFor($this->progress->rater->data()->ageGroup, $this->progress->ratings->count());
         $algorithmShortTerm = $manager->getFor($this->progress->rater->data()->ageGroup, 0);
 
-        // algorithm
         $algorithmStruct = new AlgorithmStruct;
         $algorithmStruct->version = $algorithm->info;
         $algorithmStruct->clinicalCutoff = $algorithm->clinicalCutoff;
@@ -76,7 +71,7 @@ class Progress
         $algorithmStruct->srsClinicalCutoffAsString = number_format(36, 1);
         $this->progress->algorithm = $algorithmStruct;
 
-        // algorithmShortTerm
+        // INFO: AlgorithmShortTerm
         $algorithmStruct = new AlgorithmStruct;
         $algorithmStruct->version = $algorithmShortTerm->info;
         $algorithmStruct->clinicalCutoff = $algorithmShortTerm->clinicalCutoff;
@@ -92,23 +87,23 @@ class Progress
         $this->progress->effectSize = round($this->progress->ratingChange / $algorithm->standardDeviation, 2);
         $this->progress->effectSizeAsString = number_format($this->progress->effectSize, 2);
 
-        // ETR Meeting Target
+        // INFO: ETR Meeting Target
         $etrMtgTarget = new EtrMtgTarget($this->progress->rater, $this->progress->ratings);
         $this->progress->etrMtgTarget = $etrMtgTarget->data();
 
-        // ETR Target
+        // INFO: ETR Target
         $etrTarget = new EtrTarget($this->progress->rater, $this->progress->ratings);
         $this->progress->etrTarget = $etrTarget->data();
 
-        // Validity Indicators
+        // INFO: Validity Indicators
         $validityIndicators = new ValidityIndicators($algorithm, $this->progress->ratings);
         $this->progress->validityIndicators = $validityIndicators->data();
 
-        // Milestones
+        // INFO: Milestones
         $milestones = new Milestones($algorithm, $this->progress->ratings);
         $this->progress->milestones = $milestones->data();
 
-        // Exclusions
+        // INFO: Exclusions
         $exclusions = new Exclusions($this->progress->rater->data()->excludeFromStats === 1, $this->progress->validityIndicators->firstRatingAbove32, $this->progress->validityIndicators->zeroOrOneMeetings);
         $this->progress->exclusions = $exclusions->data();
     }

@@ -45,9 +45,9 @@ class EtrTarget
     {
         $manager = new AlgorithmManager;
 
-        // Always use the Short Term Algorithm.  There are two reasons for this.
-        // 1. The short-term target is not as difficult to reach than the long term target.
-        // 2. Most people will be served in less than 9 meetings, which uses the short-term algorithm.
+        // INFO: Always use the Short Term Algorithm.  There are two reasons for this.
+        //  1. The short-term target is not as difficult to reach than the long term target.
+        //  2. Most people will be served in less than 9 meetings, which uses the short-term algorithm.
 
         $this->algorithm = $manager->getFor($this->rater->data()->ageGroup, 0);
 
@@ -99,9 +99,7 @@ class EtrTarget
      */
     #[Pure] public function data(): EtrStruct
     {
-        if ($this->ratings->count() === 0) {
-            return new EtrStruct;
-        }
+        if ($this->ratings->count() === 0) return new EtrStruct;
 
         return $this->data;
     }
@@ -141,24 +139,20 @@ class EtrTarget
      */
     #[Pure] private function metPercent(float $firstRatingScore, float $lastRatingScore): float
     {
-        // When the expected_change is 0.0, a division by 0 error can happen.
-        // When the expected change is less than 0.0, it means the first score is above 32.
-        // In these cases always return 0.0.
-        if ($this->expectedChange($firstRatingScore) <= 0.0) {
-            return 0.0;
-        }
+        // INFO: When the expected_change is 0.0, a division by 0 error can happen.
+        //  When the expected change is less than 0.0, it means the first score is above 32.
+        //  In these cases always return 0.0.
+
+        if ($this->expectedChange($firstRatingScore) <= 0.0) return 0.0;
 
         $change = ($lastRatingScore - $firstRatingScore);
 
         $etrTargetMetPercent = (float)(($change / $this->expectedChange($firstRatingScore)) * 100);
 
-        if ($etrTargetMetPercent > (float)100) {
-            return 100.0;
-        } else if ($etrTargetMetPercent < (float)0) {
-            return 0.0;
-        } else {
-            return $etrTargetMetPercent;
-        }
+        if ($etrTargetMetPercent > (float)100) return 100.0;
+        if ($etrTargetMetPercent < (float)0) return 0.0;
+
+        return $etrTargetMetPercent;
     }
 
     /**
@@ -172,12 +166,11 @@ class EtrTarget
      */
     private function predictedChangePercentMet(float $firstRatingScore, float $lastRatingScore, float $predictedChangeIndex): bool
     {
-        // When the expected_change is 0.0, a division by 0 error can happen.
-        // When the expected change is less than 0.0, it means the first rating score is above 32.
-        // In these cases always return 0.0.
-        if ($this->expectedChange($firstRatingScore) <= 0.0) {
-            return 0.0;
-        }
+        // INFO: When the expected_change is 0.0, a division by 0 error can happen.
+        //  When the expected change is less than 0.0, it means the first rating score is above 32.
+        //  In these cases always return 0.0.
+
+        if ($this->expectedChange($firstRatingScore) <= 0.0) return 0.0;
 
         if ($predictedChangeIndex < 0 || $predictedChangeIndex > 100) {
             throw new InvalidArgumentException('The $predictedChangeIndex parameter is invalid. It must be between 0.0 and 100.0.');

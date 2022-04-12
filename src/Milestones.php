@@ -87,13 +87,9 @@ class Milestones
      */
     #[Pure] private function cscMet(): bool
     {
-        if (! $this->rcMet()) {
-            return false;
-        }
+        if (! $this->rcMet()) return false;
 
-        if ($this->firstRating->data()->score > $this->algorithm->clinicalCutoff) {
-            return false;
-        }
+        if ($this->firstRating->data()->score > $this->algorithm->clinicalCutoff) return false;
 
         return ($this->lastRating->data()->score > $this->algorithm->clinicalCutoff);
     }

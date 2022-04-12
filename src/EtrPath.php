@@ -26,9 +26,7 @@ class EtrPath
      */
     public function __construct(Rater $rater, Rating $firstRating, int $meetings)
     {
-        if ($meetings <= 0) {
-            throw new InvalidArgumentException('There meetings argument must be greater than 0.');
-        }
+        if ($meetings <= 0) throw new InvalidArgumentException('There meetings argument must be greater than 0.');
 
         $this->data = new EtrPathStruct;
 
@@ -50,7 +48,7 @@ class EtrPath
 
         $this->algorithm = $manager->getFor($this->data->rater->data()->ageGroup, $this->data->meetings);
 
-        // Get the expected treatment response (etr) for each meeting.
+        // INFO: Get the expected treatment response (etr) for each meeting.
         $flattenMeeting = $this->algorithm->flattenMeeting;
         $maxMeetings = $this->algorithm->maxMeetings;
         $centeredAt20 = $this->data->firstRating->data()->score - 20;
@@ -60,17 +58,17 @@ class EtrPath
         $cubicMean = $this->algorithm->cubicMean + ($this->algorithm->cubicByIntake * $centeredAt20);
         $intercept = 1;
 
-        // Make sure that the entire etr is always presented.
+        // INFO: Make sure that the entire etr is always presented.
         if ($this->data->meetings < $maxMeetings) {
             $this->data->meetings = $maxMeetings;
         }
 
-        // Add the intake session.
+        // INFO: Add the intake session.
         $value = $this->data->firstRating->data()->score;
         $this->data->values[] = $value;
         $this->data->valuesAsString[] = number_format($value, 1);
 
-        // Add the remaining values.
+        // INFO: Add the remaining values.
         for ($i = 1; $i < $this->data->meetings; $i++) {
             $meeting = $i;
 

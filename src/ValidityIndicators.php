@@ -66,9 +66,7 @@ class ValidityIndicators
      */
     #[Pure] private function firstRatingAbove32(): bool
     {
-        if ($this->ratings->count() === 0) {
-            return false;
-        }
+        if ($this->ratings->count() === 0) return false;
 
         return $this->ratings->first()->data()->score > 32.0;
     }
@@ -81,6 +79,7 @@ class ValidityIndicators
     private function sawtoothPattern(): SawtoothPatternStruct
     {
         $stp = new SawtoothPattern($this->ratings);
+
         return $stp->data();
     }
 

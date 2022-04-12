@@ -29,16 +29,17 @@ class ProgressStruct
     /**
      * Return the data flattened as an array.
      *
+     * @param bool $justScores
      * @return array
      */
-    #[Pure] public function toArray(): array
+    #[Pure] public function toArray(bool $justScores = false): array
     {
         return [
             'rater' => $this->rater->data()->toArray(),
             'ratingsCount' => $this->ratingsCount,
-            'ratings' => $this->ratings->items(true),
-            'firstRating' => $this->firstRating->data()->toArray(),
-            'lastRating' => $this->lastRating->data()->toArray(),
+            'ratings' => $this->ratings->items(true, $justScores),
+            'firstRating' => $this->firstRating->data()->toArray($justScores),
+            'lastRating' => $this->lastRating->data()->toArray($justScores),
             'ratingChange' => $this->ratingChange,
             'ratingChangeAsString' => $this->ratingChangeAsString,
             'effectSize' => $this->effectSize,
